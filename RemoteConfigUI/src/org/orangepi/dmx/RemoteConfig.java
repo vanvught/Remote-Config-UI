@@ -197,20 +197,24 @@ public class RemoteConfig extends JFrame {
 				if (path != null) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
 					opi = (OrangePi) node.getUserObject();
+					
+					System.out.println(opi);
 
 					if (isRightClick(e)) {
 						final int cnt = path.getPathCount();
 						System.out.println("Right" + cnt);
 						if (cnt == 2) {
 							doReboot(opi);
-						} else if (cnt == 3) {
+						} else if ((cnt == 3) || (cnt == 4)) {
 							doSave(opi);
 						}
 					} else {
 						lblNodeId.setText(opi.getNodeId());
 						lblDisplayName.setText(opi.getNodeDisplayName());
-
-						String text = opi.getTxt(path.getLastPathComponent().toString());
+						
+						String s = path.getLastPathComponent().toString();
+//						System.out.println(s);
+						String text = opi.getTxt(s);
 
 						if (text != null) {
 							textArea.setText(text);
@@ -265,6 +269,9 @@ public class RemoteConfig extends JFrame {
 								}
 								if (txt.startsWith("tcnet")) {
 									doWizardTCNet(opi);
+								}
+								if (txt.startsWith("node")) {
+									doWizardNode(opi);
 								}
 							}
 						}
@@ -673,42 +680,42 @@ public class RemoteConfig extends JFrame {
 
 		mnRun = new JMenu("Run");
 		menuBar.add(mnRun);
-		
-				mntmGlobalControl = new JMenuItem("Global control");
-				mntmGlobalControl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
-				mnRun.add(mntmGlobalControl);
-				
-				mntmDmxTransmit = new JMenuItem("DMX Transmit");
-				mntmDmxTransmit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK));
-				mnRun.add(mntmDmxTransmit);
-		
-				mntmPixelTextPatterns = new JMenuItem("Pixel Controller Test Patterns");
-				
-						mntmPixelTextPatterns.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_MASK));
-						mnRun.add(mntmPixelTextPatterns);
-		
-				mnLTC = new JMenu("LTC");
-				mnRun.add(mnLTC);
-				
-						mntmLtcGenerator = new JMenuItem("Generator");
-						mnLTC.add(mntmLtcGenerator);
-						mntmLtcGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
-						
-								mntmSytemTime = new JMenuItem("System time");
-								mntmSytemTime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
-								mnLTC.add(mntmSytemTime);
-								
-										mntmTCNet = new JMenuItem("TCNet");
-										mntmTCNet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK));
-										mnLTC.add(mntmTCNet);
-										
-												mntmRgbDisplay = new JMenuItem("RGB Display");
-												mntmRgbDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK));
-												mnLTC.add(mntmRgbDisplay);
-												
-														mntmMIDI = new JMenuItem("MIDI");
-														mntmMIDI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.ALT_MASK));
-														mnLTC.add(mntmMIDI);
+
+		mntmGlobalControl = new JMenuItem("Global control");
+		mntmGlobalControl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
+		mnRun.add(mntmGlobalControl);
+
+		mntmDmxTransmit = new JMenuItem("DMX Transmit");
+		mntmDmxTransmit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK));
+		mnRun.add(mntmDmxTransmit);
+
+		mntmPixelTextPatterns = new JMenuItem("Pixel Controller Test Patterns");
+
+		mntmPixelTextPatterns.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_MASK));
+		mnRun.add(mntmPixelTextPatterns);
+
+		mnLTC = new JMenu("LTC");
+		mnRun.add(mnLTC);
+
+		mntmLtcGenerator = new JMenuItem("Generator");
+		mnLTC.add(mntmLtcGenerator);
+		mntmLtcGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
+
+		mntmSytemTime = new JMenuItem("System time");
+		mntmSytemTime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
+		mnLTC.add(mntmSytemTime);
+
+		mntmTCNet = new JMenuItem("TCNet");
+		mntmTCNet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK));
+		mnLTC.add(mntmTCNet);
+
+		mntmRgbDisplay = new JMenuItem("RGB Display");
+		mntmRgbDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK));
+		mnLTC.add(mntmRgbDisplay);
+
+		mntmMIDI = new JMenuItem("MIDI");
+		mntmMIDI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.ALT_MASK));
+		mnLTC.add(mntmMIDI);
 
 		mntmTftpClient = new JMenuItem("TFTP Client");
 		mntmTftpClient.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_MASK));
@@ -917,23 +924,47 @@ public class RemoteConfig extends JFrame {
 			wizard.setVisible(true);
 		}
 	}
-	
-	private void doWizardE131(OrangePi opi) {
+
+	// Node Wizard
+
+	private void doWizardNode(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
-			WizardE131Txt wizard = new WizardE131Txt(lblNodeId.getText(), opi, this);
+			WizardNodeNodeTxt wizard = new WizardNodeNodeTxt("Node "+ lblNodeId.getText(), opi, this);
 			wizard.setModal(true);
 			wizard.setVisible(true);
 		}
 	}
 	
+	// Art-Net Wizard
 	private void doWizardArtnet(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
-			WizardArtnetTxt wizard = new WizardArtnetTxt(lblNodeId.getText(), opi, this);
-			wizard.setModal(true);
-			wizard.setVisible(true);
+			if (opi.getNodeType().equals("node.txt")) {
+				WizardNodeArtnetTxt wizard = new WizardNodeArtnetTxt("Art-Net " + lblNodeId.getText(), opi, this);
+				wizard.setModal(true);
+				wizard.setVisible(true);
+			} else {
+				WizardArtnetTxt wizard = new WizardArtnetTxt(lblNodeId.getText(), opi, this);
+				wizard.setModal(true);
+				wizard.setVisible(true);
+			}
 		}
 	}
 	
+	// sACN E1.31 Wizard
+	private void doWizardE131(OrangePi opi) {
+		if (lblNodeId.getText().trim().length() != 0) {
+			if (opi.getNodeType().equals("node.txt")) {
+				WizardNodeE131Txt wizard = new WizardNodeE131Txt("sACN E1.31 " + lblNodeId.getText(), opi, this);
+				wizard.setModal(true);
+				wizard.setVisible(true);
+			} else {
+				WizardE131Txt wizard = new WizardE131Txt(lblNodeId.getText(), opi, this);
+				wizard.setModal(true);
+				wizard.setVisible(true);
+			}
+		}
+	}
+		
 	private void doWizardDmx(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
 			WizardParamsTxt wizard = new WizardParamsTxt(lblNodeId.getText(), opi, this);
@@ -1073,6 +1104,8 @@ public class RemoteConfig extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		
+//		treeMap.put(1, new OrangePi("192.168.2.150,Node,DMX,4", socketReceive));
 
 		if (!treeMap.isEmpty()) {
 			textArea.setText("");
@@ -1095,7 +1128,19 @@ public class RemoteConfig extends JFrame {
 				String nodeType = ((OrangePi) child.getUserObject()).getNodeType();
 
 				if (nodeType != null) {
-					child.add(new DefaultMutableTreeNode(nodeType));
+					if (nodeType.equals("node.txt")) {
+						System.out.println("nodeType=Node");
+						
+						DefaultMutableTreeNode nodePersonality = new DefaultMutableTreeNode(new DefaultMutableTreeNode(nodeType));
+					
+						nodePersonality.add(new DefaultMutableTreeNode("artnet.txt"));
+						
+						nodePersonality.add(new DefaultMutableTreeNode("e131.txt"));
+						
+						child.add(nodePersonality);
+					} else {
+						child.add(new DefaultMutableTreeNode(nodeType));
+					}
 				}
 
 				String nodeRdm = ((OrangePi) child.getUserObject()).getNodeRDM();
@@ -1110,7 +1155,7 @@ public class RemoteConfig extends JFrame {
 					child.add(new DefaultMutableTreeNode(nodeLtcDisplay));
 				}
 
-				String nodeMode = ((OrangePi) child.getUserObject()).getNodeMode();
+				String nodeMode = ((OrangePi) child.getUserObject()).getNodeOutput();
 
 				if (nodeMode != null) {
 					child.add(new DefaultMutableTreeNode(nodeMode));

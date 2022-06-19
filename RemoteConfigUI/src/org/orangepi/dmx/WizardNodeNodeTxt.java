@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,7 @@
 package org.orangepi.dmx;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,13 +37,12 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
-import javax.swing.SwingConstants;
-import java.awt.Component;
 
-public class WizardE131Txt extends JDialog {
-	private static final String TXT_FILE = "e131.txt";
+public class WizardNodeNodeTxt extends JDialog {
+	private static final String TXT_FILE = "node.txt";
 	//
 	private static final long serialVersionUID = 1L;
 	String nodeId = null;
@@ -68,19 +68,11 @@ public class WizardE131Txt extends JDialog {
 	private JComboBox<String> comboBoxDirectionPortB;
 	private JComboBox<String> comboBoxDirectionPortC;
 	private JComboBox<String> comboBoxDirectionPortD;
+	private JComboBox<String> comboBoxPersonality;
 	
-	private JFormattedTextField formattedTextFieldPriorityPortA;
-	private JFormattedTextField formattedTextFieldPriorityPortB;
-	private JFormattedTextField formattedTextFieldPriorityPortC;
-	private JFormattedTextField formattedTextFieldPriorityPortD;
-	private JLabel lblUniverse;
-	private JLabel lblDirection;
-	private JLabel lblMerge;
-	//
-
 	public static void main(String[] args) {
 		try {
-			WizardArtnetTxt dialog = new WizardArtnetTxt();
+			WizardNodeNodeTxt dialog = new WizardNodeNodeTxt();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -88,14 +80,14 @@ public class WizardE131Txt extends JDialog {
 		}
 	}
 	
-	public WizardE131Txt() {
-		setTitle("sACN E1.31");
+	public WizardNodeNodeTxt() {
+		setTitle("Node");
 		initComponents();
 		createEvents();
 
 	}
 	
-	public WizardE131Txt(String nodeId, OrangePi opi, RemoteConfig remoteConfig) {
+	public WizardNodeNodeTxt(String nodeId, OrangePi opi, RemoteConfig remoteConfig) {
 		this.nodeId = nodeId;
 		this.opi = opi;
 		this.remoteConfig = remoteConfig;
@@ -109,7 +101,7 @@ public class WizardE131Txt extends JDialog {
 	}
 	
 	private void initComponents() {
-		setBounds(100, 100, 424, 250);
+		setBounds(100, 100, 355, 282);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -161,8 +153,6 @@ public class WizardE131Txt extends JDialog {
 		comboBoxDirectionPortD = new JComboBox<String>();
 		comboBoxDirectionPortD.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input", "Disable"}));
 		
-		JLabel lblPriority = new JLabel("Priority");
-		
 		NumberFormatter formatterPriority = new NumberFormatter(format);
 		formatterPriority.setValueClass(Integer.class);
 		formatterPriority.setMinimum(1);
@@ -170,82 +160,67 @@ public class WizardE131Txt extends JDialog {
 		formatterPriority.setAllowsInvalid(false);
 		formatterPriority.setCommitsOnValidEdit(true);
 		
-		formattedTextFieldPriorityPortA = new JFormattedTextField(formatterPriority);
-		formattedTextFieldPriorityPortA.setEditable(false);
-		formattedTextFieldPriorityPortA.setText("100");
-		formattedTextFieldPriorityPortA.setColumns(3);
+		JLabel lblUniverse = new JLabel("Universe");
+		JLabel lblMerge = new JLabel("Merge");
+		JLabel lblDirection = new JLabel("Direction");
+		JLabel lblPersonality = new JLabel("Personality");
 		
-		formattedTextFieldPriorityPortB = new JFormattedTextField(formatterPriority);
-		formattedTextFieldPriorityPortB.setText("100");
-		formattedTextFieldPriorityPortB.setEditable(false);
-		formattedTextFieldPriorityPortB.setColumns(3);
-		
-		formattedTextFieldPriorityPortC = new JFormattedTextField(formatterPriority);
-		formattedTextFieldPriorityPortC.setText("100");
-		formattedTextFieldPriorityPortC.setEditable(false);
-		formattedTextFieldPriorityPortC.setColumns(3);
-		
-		formattedTextFieldPriorityPortD = new JFormattedTextField(formatterPriority);
-		formattedTextFieldPriorityPortD.setText("100");
-		formattedTextFieldPriorityPortD.setEditable(false);
-		formattedTextFieldPriorityPortD.setColumns(3);
-		
-		lblUniverse = new JLabel("Universe");
-		
-		lblDirection = new JLabel("Direction");
-		
-		lblMerge = new JLabel("Merge");
-				
+		comboBoxPersonality = new JComboBox<String>();
+		comboBoxPersonality.setModel(new DefaultComboBoxModel<String>(new String[] {"Art-Net 4", "sACN E1.31"}));
+						
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblUniversePortA, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortB, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortC, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortD, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniverse))
-					.addGap(18)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblDirection))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMerge))
-					.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(formattedTextFieldPriorityPortD, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortC, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortB, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortA, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblPriority))
-					.addGap(14))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(6)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblUniversePortA, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversePortB, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversePortC, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversePortD, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniverse))
+							.addGap(18)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblDirection)
+								.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblMerge)
+								.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblPersonality)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(comboBoxPersonality, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(15, Short.MAX_VALUE))
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
+					.addContainerGap(10, Short.MAX_VALUE)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPriority)
+						.addComponent(lblPersonality)
+						.addComponent(comboBoxPersonality, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblUniverse)
-						.addComponent(lblDirection)
-						.addComponent(lblMerge))
-					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+						.addComponent(lblMerge)
+						.addComponent(lblDirection))
+					.addGap(8)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(34)
@@ -253,28 +228,24 @@ public class WizardE131Txt extends JDialog {
 								.addComponent(lblUniversePortB)
 								.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedTextFieldPriorityPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 							.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblUniversePortA)
 							.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(formattedTextFieldPriorityPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addGap(7)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblUniversePortC)
 						.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(7)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblUniversePortD)
 						.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(11))
 		);
 		gl_contentPanel.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedTextFieldPortA, formattedTextFieldPortB, formattedTextFieldPortC, formattedTextFieldPortD});
@@ -325,8 +296,6 @@ public class WizardE131Txt extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				final Boolean isSelected = (comboBoxDirectionPortA.getSelectedIndex() == 1);
 				comboBoxMergePortA.setEnabled(!isSelected);
-				formattedTextFieldPriorityPortA.setEditable(isSelected);
-				formattedTextFieldPriorityPortA.setEnabled(isSelected);
 			}
 		});
 		
@@ -334,8 +303,6 @@ public class WizardE131Txt extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				final Boolean isSelected = (comboBoxDirectionPortB.getSelectedIndex() == 1);
 				comboBoxMergePortB.setEnabled(!isSelected);
-				formattedTextFieldPriorityPortB.setEditable(isSelected);
-				formattedTextFieldPriorityPortB.setEnabled(isSelected);
 			}
 		});
 		
@@ -343,8 +310,6 @@ public class WizardE131Txt extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				final Boolean isSelected = (comboBoxDirectionPortC.getSelectedIndex() == 1);
 				comboBoxMergePortC.setEnabled(!isSelected);
-				formattedTextFieldPriorityPortC.setEditable(isSelected);
-				formattedTextFieldPriorityPortC.setEnabled(isSelected);
 			}
 		});
 		
@@ -352,8 +317,6 @@ public class WizardE131Txt extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				final Boolean isSelected = (comboBoxDirectionPortD.getSelectedIndex() == 1);
 				comboBoxMergePortD.setEnabled(!isSelected);
-				formattedTextFieldPriorityPortD.setEditable(isSelected);
-				formattedTextFieldPriorityPortD.setEnabled(isSelected);
 			}
 		});
 	}
@@ -439,26 +402,17 @@ public class WizardE131Txt extends JDialog {
 						comboBoxMergePortD.setSelectedIndex(Properties.getString(line).equals("ltp") ? 1 : 0);
 						continue;
 					}
-					// Input
-					if (line.contains("priority_port_a")) {
-						formattedTextFieldPriorityPortA.setValue(Properties.getInt(line));
-						continue;
-					}
-					if (line.contains("priority_port_b")) {
-						formattedTextFieldPriorityPortB.setValue(Properties.getInt(line));
-						continue;
-					}
-					if (line.contains("priority_port_c")) {
-						formattedTextFieldPriorityPortC.setValue(Properties.getInt(line));
-						continue;
-					}
-					if (line.contains("priority_port_d")) {
-						formattedTextFieldPriorityPortD.setValue(Properties.getInt(line));
-						continue;
-					}
 				}
 			}
 		}
+	}
+	
+	private String getPersonality(JComboBox<String> comboBox) {
+		System.out.println(comboBox.getSelectedItem().toString().toLowerCase());
+		if (comboBox.getSelectedItem().toString().toLowerCase().equals("sacn e1.31")) {
+			return "sacn";
+		}
+		return "artnet";
 	}
 		
 	private String getDirection(JComboBox<String> comboBox) {
@@ -482,36 +436,28 @@ public class WizardE131Txt extends JDialog {
 	
 	private void save() {
 		if (opi != null) {
-			StringBuffer txtAppend = new StringBuffer();
+			StringBuffer txt = new StringBuffer(opi.getTxt(TXT_FILE));
+			txt.append("\n");
 			
-			txtAppend.append(String.format("direction_port_a=%s\n", getDirection(comboBoxDirectionPortA)));
-			txtAppend.append(String.format("direction_port_b=%s\n", getDirection(comboBoxDirectionPortB)));
-			txtAppend.append(String.format("direction_port_c=%s\n", getDirection(comboBoxDirectionPortC)));
-			txtAppend.append(String.format("direction_port_d=%s\n", getDirection(comboBoxDirectionPortD)));
-									
-			txtAppend.append(String.format("universe_port_a=%s\n", formattedTextFieldPortA.getValue()));
-			txtAppend.append(String.format("universe_port_b=%s\n", formattedTextFieldPortB.getValue()));
-			txtAppend.append(String.format("universe_port_c=%s\n", formattedTextFieldPortC.getValue()));
-			txtAppend.append(String.format("universe_port_d=%s\n", formattedTextFieldPortD.getValue()));
+			txt.append(String.format("personality=%s\n", getPersonality(comboBoxPersonality)));
 			
-			txtAppend.append(String.format("merge_mode_port_a=%s\n", getMergeMode(comboBoxMergePortA)));
-			txtAppend.append(String.format("merge_mode_port_b=%s\n", getMergeMode(comboBoxMergePortB)));
-			txtAppend.append(String.format("merge_mode_port_c=%s\n", getMergeMode(comboBoxMergePortC)));
-			txtAppend.append(String.format("merge_mode_port_d=%s\n", getMergeMode(comboBoxMergePortD)));
-			
-			txtAppend.append(String.format("priority_port_a=%s\n", formattedTextFieldPriorityPortA.getValue()));
-			txtAppend.append(String.format("priority_port_b=%s\n", formattedTextFieldPriorityPortB.getValue()));
-			txtAppend.append(String.format("priority_port_c=%s\n", formattedTextFieldPriorityPortC.getValue()));
-			txtAppend.append(String.format("priority_port_d=%s\n", formattedTextFieldPriorityPortD.getValue()));
-			
-			txtAppend.append(String.format("priority=%s\n", formattedTextFieldPriorityPortA.getValue()));
-					
-			String txt = Properties.removeComments(opi.getTxt(TXT_FILE));
-			txt = txt.replaceAll("direction", "#direction");
-			txt = txt.replaceAll("universe_port_", "#universe_port_");
-					
+			txt.append(String.format("universe_port_a=%s\n", formattedTextFieldPortA.getValue()));
+			txt.append(String.format("universe_port_b=%s\n", formattedTextFieldPortB.getValue()));
+			txt.append(String.format("universe_port_c=%s\n", formattedTextFieldPortC.getValue()));
+			txt.append(String.format("universe_port_d=%s\n", formattedTextFieldPortD.getValue()));
+		
+			txt.append(String.format("direction_port_a=%s\n", getDirection(comboBoxDirectionPortA)));
+			txt.append(String.format("direction_port_b=%s\n", getDirection(comboBoxDirectionPortB)));
+			txt.append(String.format("direction_port_c=%s\n", getDirection(comboBoxDirectionPortC)));
+			txt.append(String.format("direction_port_d=%s\n", getDirection(comboBoxDirectionPortD)));
+											
+			txt.append(String.format("merge_mode_port_a=%s\n", getMergeMode(comboBoxMergePortA)));
+			txt.append(String.format("merge_mode_port_b=%s\n", getMergeMode(comboBoxMergePortB)));
+			txt.append(String.format("merge_mode_port_c=%s\n", getMergeMode(comboBoxMergePortC)));
+			txt.append(String.format("merge_mode_port_d=%s\n", getMergeMode(comboBoxMergePortD)));
+								
 			try {
-				opi.doSave(txt + "\n" + txtAppend.toString());
+				opi.doSave(txt.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

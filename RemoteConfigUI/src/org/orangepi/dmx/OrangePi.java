@@ -33,8 +33,8 @@ public class OrangePi {
 	private static final String RCONFIG_TXT = "rconfig.txt";
 	private static final String DISPLAY_TXT = "display.txt";
 	private static final String NETWORK_TXT = "network.txt";
-	private static final String[] NODE_TXT = {"artnet.txt", "e131.txt", "osc.txt", "ltc.txt", "oscclnt.txt", "", "show.txt", "ddpdisp.txt"};
-	private static final String[] NODEVALUES = {"Art-Net", "sACN E1.31", "OSC Server", "LTC", "OSC Client", "RDMNet LLRP Only", "Showfile", "DDP"};
+	private static final String[] NODE_TXT = {"artnet.txt", "e131.txt", "osc.txt", "ltc.txt", "oscclnt.txt", "", "show.txt", "ddpdisp.txt", "node.txt"};
+	private static final String[] NODEVALUES = {"Art-Net", "sACN E1.31", "OSC Server", "LTC", "OSC Client", "RDMNet LLRP Only", "Showfile", "DDP", "Node"};
 	private static final String[] OUTPUT_TXT = {"params.txt", "devices.txt", "mon.txt", "serial.txt", "rgbpanel.txt", ""};
 	private static final String LDISPLAY_TXT = "ldisplay.txt";
 	private static final String TCNET_TXT = "tcnet.txt";
@@ -69,11 +69,6 @@ public class OrangePi {
 	private String nodeSparkFun = null;
 	private String nodeShow = null;
 	
-	private String sbRemoteConfig = null;
-	private String sbDisplay = null;
-	private String sbNetwork = null;
-	private String sbType = null;
-	private String sbMode = null;
 	private String sbLtcDisplay = null;
 	private String sbTCNet = null;
 	private String sbGPS = null;
@@ -94,7 +89,7 @@ public class OrangePi {
 			String[] Mode = values[2].split("\n");
 			isValid = isMapTypeValues(values[1]);	
 			
-			System.out.println("Mode[0]=" + Mode[0] + " nodeType=" + nodeType);
+			System.out.println("Mode[0]=" + Mode[0] + "\nnodeType=" + nodeType);
 			
 			if (isValid) {
 				if (Mode[0].equals("DMX") || Mode[0].equals("RDM")) {
@@ -170,30 +165,15 @@ public class OrangePi {
 	
 	public String getTxt(String txt) {
 		if (isRemoteConfigTxt(txt)) {
-			if (sbRemoteConfig == null) {
-				sbRemoteConfig = doGet(txt);
-			}
-			return sbRemoteConfig.toString();
+			return doGet(txt);
 		} else if (isDisplayTxt(txt)) {
-			if (sbDisplay == null) {
-				sbDisplay = doGet(txt);
-			}
-			return sbDisplay.toString();
+			return doGet(txt);
 		} else if (isNetworkTxt(txt)) {
-			if (sbNetwork == null) {
-				sbNetwork = doGet(txt);
-			}
-			return sbNetwork.toString();
-		} else if (isTypeTxt(txt)) {
-			if (sbType == null) {
-				sbType = doGet(txt);
-			}
-			return sbType.toString();
-		} else if (isModeTxt(txt)) {
-			if (sbMode == null) {
-				sbMode = doGet(txt);
-			}
-			return sbMode.toString();
+			return doGet(txt);
+		} else if (isNodeTxt(txt)) {
+			return doGet(txt);
+		} else if (isOutputTxt(txt)) {
+			return doGet(txt);
 		} else if (isLtcDisplayTxt(txt)) {
 			if (sbLtcDisplay == null) {
 				sbLtcDisplay = doGet(txt);
@@ -302,19 +282,14 @@ public class OrangePi {
 		Boolean bDoSave = false;
 		
 		if (isRemoteConfigTxt(txt)) {
-			sbRemoteConfig = null;
 			bDoSave = true;
 		} else if (isDisplayTxt(txt)) {
-			sbDisplay = null;
 			bDoSave = true;
 		} else if (isNetworkTxt(txt)) {
-			sbNetwork = null;
 			bDoSave = true;
-		} else if (isModeTxt(txt)) {
-			sbMode = null;
+		} else if (isOutputTxt(txt)) {
 			bDoSave = true;
-		} else if (isTypeTxt(txt)) {
-			sbType = null;
+		} else if (isNodeTxt(txt)) {
 			bDoSave = true;
 		} else if (isLtcDisplayTxt(txt)) {
 			sbLtcDisplay = null;
@@ -472,7 +447,7 @@ public class OrangePi {
 		return false;
 	}
 	
-	private Boolean isTypeTxt(String type) {
+	private Boolean isNodeTxt(String type) {
 		for (int i = 0; i < NODE_TXT.length; i++) {
 			if (type.equals(NODE_TXT[i])) {
 				return true;
@@ -481,7 +456,7 @@ public class OrangePi {
 		return false;
 	}	
 	
-	private Boolean isModeTxt(String mode) {
+	private Boolean isOutputTxt(String mode) {
 		for (int i = 0; i < OUTPUT_TXT.length; i++) {
 			if (mode.equals(OUTPUT_TXT[i])) {
 				return true;
@@ -572,7 +547,7 @@ public class OrangePi {
 		return nodeType;
 	}
 
-	public String getNodeMode() {
+	public String getNodeOutput() {
 		return nodeOutput;
 	}
 	

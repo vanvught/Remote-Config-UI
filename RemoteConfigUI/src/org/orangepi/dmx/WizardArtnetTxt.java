@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,12 +43,15 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
+import javax.swing.JTextField;
 
 public class WizardArtnetTxt extends JDialog {
+	private static final long serialVersionUID = 1L;
 	//
 	private static final String TXT_FILE = "artnet.txt";
+	private static final int SHORT_NAME_LENGTH = 18;
+	private static final int LONG_NAME_LENGTH = 64;
 	//
-	private static final long serialVersionUID = 1L;
 	String nodeId = null;
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
@@ -73,10 +76,10 @@ public class WizardArtnetTxt extends JDialog {
 	private JComboBox<String>  comboBoxProtocolPortB;
 	private JComboBox<String>  comboBoxProtocolPortC;
 	private JComboBox<String>  comboBoxProtocolPortD;
-	private JCheckBox chckbxEnablePortD;
-	private JCheckBox chckbxEnablePortC;
-	private JCheckBox chckbxEnablePortB;
-	private JCheckBox chckbxEnablePortA;
+	private JCheckBox chckbxRdmEnablePortD;
+	private JCheckBox chckbxRdmEnablePortC;
+	private JCheckBox chckbxRdmEnablePortB;
+	private JCheckBox chckbxRdmEnablePortA;
 	
 	private int artnetNet = 0;
 	private int artnetSubnet = 0;
@@ -114,8 +117,14 @@ public class WizardArtnetTxt extends JDialog {
 	private JLabel lblUniversePortB;
 	private JLabel lblUniversePortC;
 	private JLabel lblUniversePortD;
+	private JLabel lblUniverse;
 	
-
+	private JCheckBox chckbxEnableRDM;
+	private JLabel lblShortName;
+	private JLabel lblLongName;
+	private JTextField textFieldShortName;
+	private JTextField textFieldLongName;
+	
 	public static void main(String[] args) {
 		try {
 			WizardArtnetTxt dialog = new WizardArtnetTxt();
@@ -127,6 +136,7 @@ public class WizardArtnetTxt extends JDialog {
 	}
 	
 	public WizardArtnetTxt() {
+		setTitle("Art-Net");
 		initComponents();
 		createEvents();
 
@@ -146,7 +156,7 @@ public class WizardArtnetTxt extends JDialog {
 	}
 	
 	private void initComponents() {
-		setBounds(100, 100, 666, 280);
+		setBounds(100, 100, 677, 371);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -174,13 +184,13 @@ public class WizardArtnetTxt extends JDialog {
 		formattedTextFieldUniverseD.setColumns(6);
 		
 		comboBoxDirectionPortA = new JComboBox<String> ();
-		comboBoxDirectionPortA.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input"}));
+		comboBoxDirectionPortA.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input", "Disable"}));
 		comboBoxDirectionPortB = new JComboBox<String>();
-		comboBoxDirectionPortB.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input"}));
+		comboBoxDirectionPortB.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input", "Disable"}));
 		comboBoxDirectionPortC = new JComboBox<String>();
-		comboBoxDirectionPortC.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input"}));
+		comboBoxDirectionPortC.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input", "Disable"}));
 		comboBoxDirectionPortD = new JComboBox<String>();
-		comboBoxDirectionPortD.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input"}));
+		comboBoxDirectionPortD.setModel(new DefaultComboBoxModel<String>(new String[] {"Output", "Input", "Disable"}));
 		
 		comboBoxMergePortA = new JComboBox<String> ();
 		comboBoxMergePortA.setModel(new DefaultComboBoxModel<String> (new String[] {"HTP", "LTP"}));
@@ -200,10 +210,10 @@ public class WizardArtnetTxt extends JDialog {
 		comboBoxProtocolPortD = new JComboBox<String> ();
 		comboBoxProtocolPortD.setModel(new DefaultComboBoxModel<String> (new String[] {"Art-Net", "sACN"}));
 				
-		chckbxEnablePortA = new JCheckBox("Enable");
-		chckbxEnablePortB = new JCheckBox("Enable");
-		chckbxEnablePortC = new JCheckBox("Enable");
-		chckbxEnablePortD = new JCheckBox("Enable");
+		chckbxRdmEnablePortA = new JCheckBox("RDM");
+		chckbxRdmEnablePortB = new JCheckBox("RDM");
+		chckbxRdmEnablePortC = new JCheckBox("RDM");
+		chckbxRdmEnablePortD = new JCheckBox("RDM");
 		
 		chckbxMapUniverse0 = new JCheckBox("Art-Net 4 Map Universe 0");
 		
@@ -250,8 +260,8 @@ public class WizardArtnetTxt extends JDialog {
 		formattedIP4PortD = new JFormattedTextField(formatterIP);
 		formattedIP4PortD.setColumns(2);
 		
-		JLabel lblMergeMode = new JLabel("Merge Mode");
-		lblMergeMode.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+		JLabel lblMerge = new JLabel("Merge");
+		lblMerge.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		
 		JLabel lblProtocol = new JLabel("Protocol");
 		lblProtocol.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
@@ -261,6 +271,20 @@ public class WizardArtnetTxt extends JDialog {
 		
 		lblDirection = new JLabel("Direction");
 		lblDirection.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+		
+		lblUniverse = new JLabel("Universe");
+		
+		chckbxEnableRDM = new JCheckBox("Enable RDM");
+		
+		lblShortName = new JLabel("Short name");
+		
+		lblLongName = new JLabel("Long name");
+		
+		textFieldShortName = new JTextField();
+		textFieldShortName.setColumns(10);
+		
+		textFieldLongName = new JTextField();
+		textFieldLongName.setColumns(10);
 										
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
@@ -276,10 +300,11 @@ public class WizardArtnetTxt extends JDialog {
 								.addComponent(lblUniversePortD, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(formattedTextFieldUniverseD, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedTextFieldUniverseB, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedTextFieldUniverseC, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedTextFieldUniverseA, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE))
+								.addComponent(formattedTextFieldUniverseD, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldUniverseC, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldUniverseB, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldUniverseA, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniverse))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 								.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
@@ -289,15 +314,20 @@ public class WizardArtnetTxt extends JDialog {
 								.addComponent(lblDirection))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblMergeMode)
+								.addComponent(lblMerge)
 								.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
 								.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
 								.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
 								.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(comboBoxProtocolPortD, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxProtocolPortC, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxProtocolPortB, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxProtocolPortA, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblProtocol, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPanel.createSequentialGroup()
-									.addGap(7)
-									.addComponent(comboBoxProtocolPortA, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(formattedIP1PortA, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
@@ -307,57 +337,54 @@ public class WizardArtnetTxt extends JDialog {
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(formattedIP4PortA, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(chckbxEnablePortA, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))
+									.addComponent(chckbxRdmEnablePortA, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addGap(6)
+									.addComponent(formattedIP1PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP2PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP3PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP4PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(chckbxRdmEnablePortD, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addGap(15)
+									.addComponent(lblDestinationIP, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE))
 								.addGroup(gl_contentPanel.createSequentialGroup()
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-										.addGroup(gl_contentPanel.createSequentialGroup()
-											.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-												.addGroup(gl_contentPanel.createSequentialGroup()
-													.addGap(12)
-													.addComponent(lblProtocol, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
-												.addComponent(comboBoxProtocolPortD, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE))
-											.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-												.addGroup(gl_contentPanel.createSequentialGroup()
-													.addGap(6)
-													.addComponent(formattedIP1PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(ComponentPlacement.RELATED)
-													.addComponent(formattedIP2PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(ComponentPlacement.RELATED)
-													.addComponent(formattedIP3PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(ComponentPlacement.RELATED)
-													.addComponent(formattedIP4PortD, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(ComponentPlacement.RELATED)
-													.addComponent(chckbxEnablePortD, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))
-												.addGroup(gl_contentPanel.createSequentialGroup()
-													.addGap(15)
-													.addComponent(lblDestinationIP, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE))))
-										.addGroup(gl_contentPanel.createSequentialGroup()
-											.addComponent(comboBoxProtocolPortC, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP1PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP2PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP3PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP4PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(chckbxEnablePortC, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))
-										.addGroup(gl_contentPanel.createSequentialGroup()
-											.addComponent(comboBoxProtocolPortB, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP1PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP2PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP3PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(formattedIP4PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(chckbxEnablePortB, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)))))
-							.addGap(210))
-						.addComponent(chckbxMapUniverse0))
+									.addComponent(formattedIP1PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP2PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP3PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP4PortC, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(chckbxRdmEnablePortC, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP1PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP2PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP3PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedIP4PortB, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(chckbxRdmEnablePortB, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE))))
+						.addComponent(chckbxEnableRDM)
+						.addComponent(chckbxMapUniverse0)
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblShortName)
+								.addComponent(lblLongName))
+							.addGap(18)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(textFieldShortName, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
+								.addComponent(textFieldLongName, GroupLayout.PREFERRED_SIZE, 531, GroupLayout.PREFERRED_SIZE))))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_contentPanel.setVerticalGroup(
@@ -369,12 +396,13 @@ public class WizardArtnetTxt extends JDialog {
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblProtocol, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE)
 								.addComponent(lblDestinationIP, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED, 12, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED, 15, Short.MAX_VALUE))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addContainerGap()
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblMergeMode)
-								.addComponent(lblDirection, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblMerge)
+								.addComponent(lblDirection, GroupLayout.PREFERRED_SIZE, 15, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniverse))
 							.addPreferredGap(ComponentPlacement.UNRELATED)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
@@ -389,7 +417,7 @@ public class WizardArtnetTxt extends JDialog {
 							.addComponent(formattedIP4PortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(2)
-							.addComponent(chckbxEnablePortA)))
+							.addComponent(chckbxRdmEnablePortA)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -405,7 +433,7 @@ public class WizardArtnetTxt extends JDialog {
 								.addComponent(formattedIP4PortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(8)
-							.addComponent(chckbxEnablePortB)))
+							.addComponent(chckbxRdmEnablePortB)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -421,7 +449,7 @@ public class WizardArtnetTxt extends JDialog {
 								.addComponent(formattedIP4PortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(8)
-							.addComponent(chckbxEnablePortC)))
+							.addComponent(chckbxRdmEnablePortC)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -434,13 +462,23 @@ public class WizardArtnetTxt extends JDialog {
 								.addComponent(formattedIP1PortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addComponent(formattedIP2PortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addComponent(formattedIP3PortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedIP4PortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(chckbxMapUniverse0))
+								.addComponent(formattedIP4PortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(8)
-							.addComponent(chckbxEnablePortD)))
-					.addGap(11))
+							.addComponent(chckbxRdmEnablePortD)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(chckbxEnableRDM)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(chckbxMapUniverse0)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblShortName)
+						.addComponent(textFieldShortName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(textFieldLongName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblLongName))
+					.addContainerGap())
 		);
 		
 		contentPanel.setLayout(gl_contentPanel);
@@ -596,9 +634,26 @@ public class WizardArtnetTxt extends JDialog {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
 					final String line = lines[i];
+					//
+					if (line.contains("short_name")) {
+						textFieldShortName.setText(Properties.getString(line));
+						continue;
+					}
+					if (line.contains("long_name")) {
+						textFieldLongName.setText(Properties.getString(line));
+						continue;
+					}
+					//
+					if (line.contains("enable_rdm")) {
+						chckbxEnableRDM.setSelected(Properties.getBool(line));
+						continue;
+					}
+					//
 					if (line.contains("direction_port_a")) {
 						if (Properties.getString(line).equals("input")) {
 							comboBoxDirectionPortA.setSelectedIndex(1);
+						} else if (Properties.getString(line).equals("disable")) {
+							comboBoxDirectionPortA.setSelectedIndex(2);
 						} else {
 							comboBoxDirectionPortA.setSelectedIndex(0);
 						}
@@ -607,6 +662,8 @@ public class WizardArtnetTxt extends JDialog {
 					if (line.contains("direction_port_b")) {
 						if (Properties.getString(line).equals("input")) {
 							comboBoxDirectionPortB.setSelectedIndex(1);
+						} else if (Properties.getString(line).equals("disable")) {
+							comboBoxDirectionPortB.setSelectedIndex(2);
 						} else {
 							comboBoxDirectionPortB.setSelectedIndex(0);
 						}
@@ -615,6 +672,8 @@ public class WizardArtnetTxt extends JDialog {
 					if (line.contains("direction_port_c")) {
 						if (Properties.getString(line).equals("input")) {
 							comboBoxDirectionPortC.setSelectedIndex(1);
+						} else if (Properties.getString(line).equals("disable")) {
+							comboBoxDirectionPortC.setSelectedIndex(2);
 						} else {
 							comboBoxDirectionPortC.setSelectedIndex(0);
 						}
@@ -623,6 +682,8 @@ public class WizardArtnetTxt extends JDialog {
 					if (line.contains("direction_port_d")) {
 						if (Properties.getString(line).equals("input")) {
 							comboBoxDirectionPortD.setSelectedIndex(1);
+						} else if (Properties.getString(line).equals("disable")) {
+							comboBoxDirectionPortD.setSelectedIndex(2);
 						} else {
 							comboBoxDirectionPortD.setSelectedIndex(0);
 						}
@@ -642,25 +703,21 @@ public class WizardArtnetTxt extends JDialog {
 					if (line.contains("universe_port_a")) {
 						artnetAdressPortA = Properties.getInt(line);
 						formattedTextFieldUniverseA.setValue(getUniverseFromAddress(artnetAdressPortA));
-						chckbxEnablePortA.setSelected(!line.startsWith("#"));
 						continue;
 					}
 					if (line.contains("universe_port_b")) {
 						artnetAdressPortB = Properties.getInt(line);
 						formattedTextFieldUniverseB.setValue(getUniverseFromAddress(artnetAdressPortB));
-						chckbxEnablePortB.setSelected(!line.startsWith("#"));
 						continue;
 					}
 					if (line.contains("universe_port_c")) {
 						artnetAdressPortC = Properties.getInt(line);
 						formattedTextFieldUniverseC.setValue(getUniverseFromAddress(artnetAdressPortC));
-						chckbxEnablePortC.setSelected(!line.startsWith("#"));
 						continue;
 					}
 					if (line.contains("universe_port_d")) {
 						artnetAdressPortD = Properties.getInt(line);
 						formattedTextFieldUniverseD.setValue(getUniverseFromAddress(artnetAdressPortD));
-						chckbxEnablePortD.setSelected(!line.startsWith("#"));
 						continue;
 					}
 					//
@@ -695,6 +752,23 @@ public class WizardArtnetTxt extends JDialog {
 					}
 					if (line.contains("protocol_port_d")) {
 						comboBoxProtocolPortD.setSelectedIndex(Properties.getString(line).equals("sacn") ? 1 : 0);
+						continue;
+					}
+					//
+					if (line.contains("rdm_enable_port_a")) {
+						chckbxRdmEnablePortA.setSelected(Properties.getBool(line));
+						continue;
+					}
+					if (line.contains("rdm_enable_port_b")) {
+						chckbxRdmEnablePortB.setSelected(Properties.getBool(line));
+						continue;	
+					}
+					if (line.contains("rdm_enable_port_c")) {
+						chckbxRdmEnablePortC.setSelected(Properties.getBool(line));
+						continue;	
+					}
+					if (line.contains("rdm_enable_port_d")) {
+						chckbxRdmEnablePortD.setSelected(Properties.getBool(line));
 						continue;
 					}
 					// Input
@@ -765,11 +839,7 @@ public class WizardArtnetTxt extends JDialog {
 		
 		return universe;
 	}
-	
-	private String getComment(JCheckBox checkBox) {
-		return checkBox.isSelected() ? "" : "#";
-	}
-	
+		
 	private String getComment(JComboBox<String> comboBox) {
 		return comboBox.getSelectedItem().toString() == "Input" ? "" : "#";
 	}
@@ -789,6 +859,11 @@ public class WizardArtnetTxt extends JDialog {
 		if (comboBox.getSelectedItem().toString().toLowerCase().equals("input")) {
 			return "input";
 		}
+		
+		if (comboBox.getSelectedItem().toString().toLowerCase().equals("disable")) {
+			return "disable";
+		}
+		
 		return "output";
 	}
 	
@@ -809,7 +884,23 @@ public class WizardArtnetTxt extends JDialog {
 	private void save() {
 		if (opi != null) {
 			StringBuffer txtAppend = new StringBuffer();
-						
+			//
+			final String shortName = textFieldShortName.getText();	
+			if (shortName.length() > SHORT_NAME_LENGTH) {
+				txtAppend.append(String.format("short_name=%s\n", shortName.substring(0, SHORT_NAME_LENGTH - 1)));
+				textFieldShortName.setText(shortName.substring(SHORT_NAME_LENGTH - 1));
+			} else {
+				txtAppend.append(String.format("short_name=%s\n", shortName));
+			}
+			
+			final String longName = textFieldLongName.getText();	
+			if (longName.length() > LONG_NAME_LENGTH) {
+				txtAppend.append(String.format("long_name=%s\n", longName.substring(0, LONG_NAME_LENGTH - 1)));
+				textFieldShortName.setText(longName.substring(LONG_NAME_LENGTH - 1));
+			} else {
+				txtAppend.append(String.format("long_name=%s\n", longName));
+			}
+			//			
 			txtAppend.append(String.format("net=%d\n", artnetNet));
 			txtAppend.append(String.format("subnet=%d\n", artnetSubnet));
 			
@@ -818,13 +909,12 @@ public class WizardArtnetTxt extends JDialog {
 			txtAppend.append(String.format("direction_port_c=%s\n", getDirection(comboBoxDirectionPortC)));
 			txtAppend.append(String.format("direction_port_d=%s\n", getDirection(comboBoxDirectionPortD)));
 			
-			txtAppend.append(String.format("%suniverse_port_a=%s\n", getComment(chckbxEnablePortA), artnetAdressPortA));
-			txtAppend.append(String.format("%suniverse_port_b=%s\n", getComment(chckbxEnablePortB), artnetAdressPortB));
-			txtAppend.append(String.format("%suniverse_port_c=%s\n", getComment(chckbxEnablePortC), artnetAdressPortC));
-			txtAppend.append(String.format("%suniverse_port_d=%s\n", getComment(chckbxEnablePortD), artnetAdressPortD));
+			txtAppend.append(String.format("universe_port_a=%s\n", artnetAdressPortA));
+			txtAppend.append(String.format("universe_port_b=%s\n", artnetAdressPortB));
+			txtAppend.append(String.format("universe_port_c=%s\n", artnetAdressPortC));
+			txtAppend.append(String.format("universe_port_d=%s\n", artnetAdressPortD));
 			
 			// Output
-			
 			txtAppend.append(String.format("protocol_port_a=%s\n", getProtocol(comboBoxProtocolPortA)));
 			txtAppend.append(String.format("protocol_port_b=%s\n", getProtocol(comboBoxProtocolPortB)));
 			txtAppend.append(String.format("protocol_port_c=%s\n", getProtocol(comboBoxProtocolPortC)));
@@ -834,6 +924,13 @@ public class WizardArtnetTxt extends JDialog {
 			txtAppend.append(String.format("merge_mode_port_b=%s\n", getMergeMode(comboBoxMergePortB)));
 			txtAppend.append(String.format("merge_mode_port_c=%s\n", getMergeMode(comboBoxMergePortC)));
 			txtAppend.append(String.format("merge_mode_port_d=%s\n", getMergeMode(comboBoxMergePortD)));
+			
+			txtAppend.append(String.format("enable_rdm=%d\n", chckbxEnableRDM.isSelected() ? 1 : 0));
+
+			txtAppend.append(String.format("rdm_enable_port_a=%s\n", chckbxRdmEnablePortA.isSelected() ? 1 : 0));
+			txtAppend.append(String.format("rdm_enable_port_b=%s\n", chckbxRdmEnablePortB.isSelected() ? 1 : 0));
+			txtAppend.append(String.format("rdm_enable_port_c=%s\n", chckbxRdmEnablePortC.isSelected() ? 1 : 0));
+			txtAppend.append(String.format("rdm_enable_port_d=%s\n", chckbxRdmEnablePortD.isSelected() ? 1 : 0));
 				
 			// Input
 			txtAppend.append(String.format("%sdestination_ip_port_a=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortA), formattedIP1PortA.getValue(),formattedIP2PortA.getValue(),formattedIP3PortA.getValue(),formattedIP4PortA.getValue()));
@@ -848,6 +945,7 @@ public class WizardArtnetTxt extends JDialog {
 			txt = txt.replaceAll("direction", "#direction");
 			txt = txt.replaceAll("universe_port_", "#universe_port_");
 			txt = txt.replaceAll("destination_ip_port", "#destination_ip_port");
+			txt = txt.replaceAll("rdm_enable_port", "#rdm_enable_port");
 					
 			try {
 				opi.doSave(txt + "\n" + txtAppend.toString());

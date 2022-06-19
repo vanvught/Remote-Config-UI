@@ -58,10 +58,12 @@ public class WizardDevicesTxt extends JDialog {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JRadioButton rdbtnRGBW;
 	private int ledsPerPixel = 3;
+	private int maxPorts = 8;
 	private JLabel lblCount;
 	private NumberFormatter formatterCount;
 	private JFormattedTextField formattedTextFieldPixelCount;
 	private JLabel lblStartUniverse;
+	
 	private JLabel lblPort1;
 	private JLabel lblPort2;
 	private JLabel lblPort3;
@@ -70,6 +72,16 @@ public class WizardDevicesTxt extends JDialog {
 	private JLabel lblPort6;
 	private JLabel lblPort7;
 	private JLabel lblPort8;
+	private JLabel lblPort9;
+	private JLabel lblPort10;
+	private JLabel lblPort11;
+	private JLabel lblPort12;
+	private JLabel lblPort13;
+	private JLabel lblPort14;
+	private JLabel lblPort15;
+	private JLabel lblPort16;
+	
+	private JLabel lblUniversePort1;
 	private JLabel lblUniversePort2;
 	private JLabel lblUniversePort3;
 	private JLabel lblUniversePort4;
@@ -77,7 +89,15 @@ public class WizardDevicesTxt extends JDialog {
 	private JLabel lblUniversePort6;
 	private JLabel lblUniversePort7;
 	private JLabel lblUniversePort8;
-	private JLabel lblUniversePort1;
+	private JLabel lblUniversePort9;
+	private JLabel lblUniversePort10;
+	private JLabel lblUniversePort11;
+	private JLabel lblUniversePort12;
+	private JLabel lblUniversePort13;
+	private JLabel lblUniversePort14;
+	private JLabel lblUniversePort15;
+	private JLabel lblUniversePort16;
+	
 	private NumberFormatter formatterStartUniverse;
 	private JFormattedTextField formattedTextFieldStartUniverse;
 	private JSpinner spinnerActiveOutput;
@@ -106,7 +126,7 @@ public class WizardDevicesTxt extends JDialog {
 	}
 	
 	private void InitComponents() {
-		setBounds(100, 100, 305, 413);
+		setBounds(100, 100, 305, 588);
 	
 		JLabel lblType = new JLabel("Type");
 		
@@ -118,7 +138,7 @@ public class WizardDevicesTxt extends JDialog {
 		
 		lblCount = new JLabel("Pixel count");
 		
-		spinnerActiveOutput = new JSpinner(new SpinnerNumberModel(1, 1, 8, 1));
+		spinnerActiveOutput = new JSpinner(new SpinnerNumberModel(1, 1, 16, 1));
 
 		JLabel lblOutputs = new JLabel("Outputs");
 		
@@ -135,14 +155,23 @@ public class WizardDevicesTxt extends JDialog {
 		
 		lblStartUniverse = new JLabel("Start Universe");
 		
-		lblPort1 = new JLabel("Port 1");
-		lblPort2 = new JLabel("Port 2");
-		lblPort3 = new JLabel("Port 3");
-		lblPort4 = new JLabel("Port 4");
-		lblPort5 = new JLabel("Port 5");
-		lblPort6 = new JLabel("Port 6");
-		lblPort7 = new JLabel("Port 7");
-		lblPort8 = new JLabel("Port 8");
+		lblPort1 = new JLabel("Port 1 ");
+		lblPort2 = new JLabel("Port 2 ");
+		lblPort3 = new JLabel("Port 3 ");
+		lblPort4 = new JLabel("Port 4 ");
+		lblPort5 = new JLabel("Port 5 ");
+		lblPort6 = new JLabel("Port 6 ");
+		lblPort7 = new JLabel("Port 7 ");
+		lblPort8 = new JLabel("Port 8 ");
+		//
+		lblPort9 =  new JLabel("Port 9 ");
+		lblPort10 = new JLabel("Port 10");
+		lblPort11 = new JLabel("Port 11");
+		lblPort12 = new JLabel("Port 12");
+		lblPort13 = new JLabel("Port 13");
+		lblPort14 = new JLabel("Port 14");
+		lblPort15 = new JLabel("Port 15");
+		lblPort16 = new JLabel("Port 16");
 		
 		lblUniversePort1 = new JLabel("");
 		lblUniversePort2 = new JLabel("");		
@@ -152,6 +181,15 @@ public class WizardDevicesTxt extends JDialog {
 		lblUniversePort6 = new JLabel("");	
 		lblUniversePort7 = new JLabel("");
 		lblUniversePort8 = new JLabel("");
+		//
+		lblUniversePort9  = new JLabel("");
+		lblUniversePort10 = new JLabel("");		
+		lblUniversePort11 = new JLabel("");		
+		lblUniversePort12 = new JLabel("");	
+		lblUniversePort13 = new JLabel("");	
+		lblUniversePort14 = new JLabel("");	
+		lblUniversePort15 = new JLabel("");
+		lblUniversePort16 = new JLabel("");
 		
 		formatterStartUniverse = new NumberFormatter(format);
 		formatterStartUniverse.setValueClass(Integer.class);
@@ -211,13 +249,13 @@ public class WizardDevicesTxt extends JDialog {
 							.addGap(22)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblPort2)
-									.addGap(18)
-									.addComponent(lblUniversePort2))
-								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(lblPort1)
 									.addGap(18)
 									.addComponent(lblUniversePort1))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort2)
+									.addGap(18)
+									.addComponent(lblUniversePort2))
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(lblPort3)
 									.addGap(18)
@@ -241,7 +279,39 @@ public class WizardDevicesTxt extends JDialog {
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(lblPort8)
 									.addGap(18)
-									.addComponent(lblUniversePort8)))
+									.addComponent(lblUniversePort8))
+							.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort9)
+									.addGap(18)
+									.addComponent(lblUniversePort9))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort10)
+									.addGap(18)
+									.addComponent(lblUniversePort10))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort11)
+									.addGap(18)
+									.addComponent(lblUniversePort11))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort12)
+									.addGap(18)
+									.addComponent(lblUniversePort12))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort13)
+									.addGap(18)
+									.addComponent(lblUniversePort13))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort14)
+									.addGap(18)
+									.addComponent(lblUniversePort14))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort15)
+									.addGap(18)
+									.addComponent(lblUniversePort15))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblPort16)
+									.addGap(18)
+									.addComponent(lblUniversePort16)))
 							.addGap(69))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
@@ -249,65 +319,97 @@ public class WizardDevicesTxt extends JDialog {
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
+				groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblType)
-						.addComponent(rdbtnRGB)
-						.addComponent(rdbtnRGBW))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblCount)
-						.addComponent(formattedTextFieldPixelCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversesPerPort))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblGroupSize)
-						.addComponent(formattedTextFieldGroupSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblOutputs)
-						.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblStartUniverse)
-						.addComponent(formattedTextFieldStartUniverse, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblProtocol))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort1)
-						.addComponent(lblUniversePort1))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort2)
-						.addComponent(lblUniversePort2))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort3)
-						.addComponent(lblUniversePort3))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort4)
-						.addComponent(lblUniversePort4))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort5)
-						.addComponent(lblUniversePort5))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort6)
-						.addComponent(lblUniversePort6))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort7)
-						.addComponent(lblUniversePort7))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPort8)
-						.addComponent(lblUniversePort8))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
+						.addContainerGap()
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblType)
+								.addComponent(rdbtnRGB)
+								.addComponent(rdbtnRGBW))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblCount)
+								.addComponent(formattedTextFieldPixelCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversesPerPort))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblGroupSize)
+								.addComponent(formattedTextFieldGroupSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblOutputs)
+								.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblStartUniverse)
+								.addComponent(formattedTextFieldStartUniverse, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblProtocol))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort1)
+								.addComponent(lblUniversePort1))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort2)
+								.addComponent(lblUniversePort2))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort3)
+								.addComponent(lblUniversePort3))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort4)
+								.addComponent(lblUniversePort4))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort5)
+								.addComponent(lblUniversePort5))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort6)
+								.addComponent(lblUniversePort6))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort7)
+								.addComponent(lblUniversePort7))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort8)
+								.addComponent(lblUniversePort8))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort9)
+								.addComponent(lblUniversePort9))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort10)
+								.addComponent(lblUniversePort10))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort11)
+								.addComponent(lblUniversePort11))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort12)
+								.addComponent(lblUniversePort12))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort13)
+								.addComponent(lblUniversePort13))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort14)
+								.addComponent(lblUniversePort14))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort15)
+								.addComponent(lblUniversePort15))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblPort16)
+								.addComponent(lblUniversePort16))
+						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
 		
 		contentPanel.setLayout(groupLayout);
 
@@ -363,6 +465,9 @@ public class WizardDevicesTxt extends JDialog {
 		
 		spinnerActiveOutput.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
+				if ((maxPorts == 8) && ((int) spinnerActiveOutput.getValue() > 8)) {
+					spinnerActiveOutput.setValue((int)8);
+				}
 				update();
 			}
 		});
@@ -427,8 +532,15 @@ public class WizardDevicesTxt extends JDialog {
 						spinnerActiveOutput.setValue(Properties.getInt(line));
 						continue;
 					}
+					if (line.contains("start_uni_port_16")) {
+						maxPorts = 16;
+						continue;
+					}
 					if (line.contains("start_uni_port_1")) {
-						formattedTextFieldStartUniverse.setValue(Properties.getInt(line));
+						final int lastIndex = line.lastIndexOf("_1=");
+						if (lastIndex != -1) {
+							formattedTextFieldStartUniverse.setValue(Properties.getInt(line));
+						}
 						continue;
 					}
 				}
@@ -469,6 +581,15 @@ public class WizardDevicesTxt extends JDialog {
 		lblUniversePort6.setText("");
 		lblUniversePort7.setText(""); 
 		lblUniversePort8.setText("");
+		//
+		lblUniversePort9.setText(""); 
+		lblUniversePort10.setText(""); 	
+		lblUniversePort11.setText("");
+		lblUniversePort12.setText("");
+		lblUniversePort13.setText("");
+		lblUniversePort14.setText(""); 
+		lblUniversePort15.setText("");
+		lblUniversePort16.setText("");
 		
 		final int outputs = (int) spinnerActiveOutput.getValue();
 		
@@ -520,12 +641,76 @@ public class WizardDevicesTxt extends JDialog {
 				lblUniversePort7.setText(String.valueOf(universePrevious + universes));
 		}
 		
-		if (outputs == 8) {
+		if (outputs >= 8) {
 			final int universePrevious = Integer.parseInt(lblUniversePort7.getText());
 			if (isArtNet) 
 				lblUniversePort8.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
 			else 
 				lblUniversePort8.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 9) {
+			final int universePrevious = Integer.parseInt(lblUniversePort8.getText());
+			if (isArtNet) 
+				lblUniversePort9.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort9.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 10) {
+			final int universePrevious = Integer.parseInt(lblUniversePort9.getText());
+			if (isArtNet) 
+				lblUniversePort10.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort10.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 11) {
+			final int universePrevious = Integer.parseInt(lblUniversePort10.getText());
+			if (isArtNet) 
+				lblUniversePort11.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort11.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 12) {
+			final int universePrevious = Integer.parseInt(lblUniversePort11.getText());
+			if (isArtNet) 
+				lblUniversePort12.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort12.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 13) {
+			final int universePrevious = Integer.parseInt(lblUniversePort12.getText());
+			if (isArtNet) 
+				lblUniversePort13.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort13.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 14) {
+			final int universePrevious = Integer.parseInt(lblUniversePort13.getText());
+			if (isArtNet) 
+				lblUniversePort14.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort14.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs >= 15) {
+			final int universePrevious = Integer.parseInt(lblUniversePort14.getText());
+			if (isArtNet) 
+				lblUniversePort15.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort15.setText(String.valueOf(universePrevious + universes));
+		}
+		
+		if (outputs == 16) {
+			final int universePrevious = Integer.parseInt(lblUniversePort15.getText());
+			if (isArtNet) 
+				lblUniversePort16.setText(String.valueOf(ArtNet.getStartUniverse(universePrevious + universes)));
+			else 
+				lblUniversePort16.setText(String.valueOf(universePrevious + universes));
 		}
 	}
 	
@@ -533,7 +718,8 @@ public class WizardDevicesTxt extends JDialog {
 		if (opi != null) {
 			StringBuffer devicesTxtAppend = new StringBuffer();		
 			devicesTxtAppend.append(String.format("led_count=%s\n", formattedTextFieldPixelCount.getText()));
-			devicesTxtAppend.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));	
+			devicesTxtAppend.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
+			//
 			devicesTxtAppend.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
 			devicesTxtAppend.append(String.format("start_uni_port_2=%s\n", lblUniversePort2.getText()));
 			devicesTxtAppend.append(String.format("start_uni_port_3=%s\n", lblUniversePort3.getText()));
@@ -542,13 +728,24 @@ public class WizardDevicesTxt extends JDialog {
 			devicesTxtAppend.append(String.format("start_uni_port_6=%s\n", lblUniversePort6.getText()));
 			devicesTxtAppend.append(String.format("start_uni_port_7=%s\n", lblUniversePort7.getText()));
 			devicesTxtAppend.append(String.format("start_uni_port_8=%s\n", lblUniversePort8.getText()));
+			//
+			if ((int) spinnerActiveOutput.getValue() > 8) {
+				devicesTxtAppend.append(String.format("start_uni_port_9=%s\n", lblUniversePort9.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_10=%s\n", lblUniversePort10.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_11=%s\n", lblUniversePort11.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_12=%s\n", lblUniversePort12.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_13=%s\n", lblUniversePort13.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_14=%s\n", lblUniversePort14.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_15=%s\n", lblUniversePort15.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_16=%s\n", lblUniversePort16.getText()));
+			}
 			
 			devicesTxtAppend.append(String.format("led_grouping=%s\n", (int) formattedTextFieldGroupSize.getValue() != 1 ? "1" : "0"));
 			devicesTxtAppend.append(String.format("led_group_count=%d\n", (int) formattedTextFieldGroupSize.getValue()));
 			
 			String txt = opi.getTxt("devices.txt");
 			
-			txt = txt.replaceAll("start_uni_port_", "#start_uni_port_");
+			txt = txt.replaceAll("start_uni_port_", "#");
 			
 			try {
 				opi.doSave(txt + "\n" + devicesTxtAppend.toString());
