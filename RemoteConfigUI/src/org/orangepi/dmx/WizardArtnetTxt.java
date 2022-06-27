@@ -522,28 +522,28 @@ public class WizardArtnetTxt extends JDialog {
 			}
 		});
 		
-		formattedTextFieldUniverseB.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				try {
-					formattedTextFieldUniverseB.commitEdit();
-					artnetAdressPortA = setNetSubNet((int)formattedTextFieldUniverseB.getValue());
-					update('A');
-				} catch (ParseException e1) {
-					formattedTextFieldUniverseB.setValue(getUniverseFromAddress(artnetAdressPortA));
-				}
-			}
-		});
-		
 		formattedTextFieldUniverseA.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
 					formattedTextFieldUniverseA.commitEdit();
-					artnetAdressPortB = setNetSubNet((int)formattedTextFieldUniverseA.getValue());
+					artnetAdressPortA = setNetSubNet((int)formattedTextFieldUniverseA.getValue());
+					update('A');
+				} catch (ParseException e1) {
+					formattedTextFieldUniverseA.setValue(getUniverseFromAddress(artnetAdressPortA));
+				}
+			}
+		});
+		
+		formattedTextFieldUniverseB.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					formattedTextFieldUniverseB.commitEdit();
+					artnetAdressPortB = setNetSubNet((int)formattedTextFieldUniverseB.getValue());
 					update('B');
 				} catch (ParseException e1) {
-					formattedTextFieldUniverseA.setValue(getUniverseFromAddress(artnetAdressPortB));
+					formattedTextFieldUniverseB.setValue(getUniverseFromAddress(artnetAdressPortB));
 				}
 			}
 		});
@@ -846,9 +846,9 @@ public class WizardArtnetTxt extends JDialog {
 	
 	private void update(char port) {
 		if (port != 'A')
-			formattedTextFieldUniverseB.setValue(getUniverseFromAddress(artnetAdressPortA));
+			formattedTextFieldUniverseA.setValue(getUniverseFromAddress(artnetAdressPortA));
 		if (port != 'B')
-			formattedTextFieldUniverseA.setValue(getUniverseFromAddress(artnetAdressPortB));
+			formattedTextFieldUniverseB.setValue(getUniverseFromAddress(artnetAdressPortB));
 		if (port != 'C')
 			formattedTextFieldUniverseC.setValue(getUniverseFromAddress(artnetAdressPortC));
 		if (port != 'D')

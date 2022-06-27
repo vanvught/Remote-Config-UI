@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,19 +28,19 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.NumberFormat;
 
-import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.EmptyBorder;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
@@ -54,9 +54,6 @@ public class WizardDevicesTxt extends JDialog {
 	//
 	private JButton btnCancel;
 	private JButton btnSave;
-	private JRadioButton rdbtnRGB;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JRadioButton rdbtnRGBW;
 	private int ledsPerPixel = 3;
 	private int maxPorts = 8;
 	private JLabel lblCount;
@@ -105,6 +102,9 @@ public class WizardDevicesTxt extends JDialog {
 	private JLabel lblProtocol;
 	private JButton btnSetDefaults;
 	private JFormattedTextField formattedTextFieldGroupSize;
+	private JComboBox<String> comboBoxType;
+	private JComboBox<String> comboBoxMap;
+	private JComboBox<String> comboBoxTestPattern;
 
 	public WizardDevicesTxt(String nodeId, OrangePi opi, RemoteConfig remoteConfig) {
 		this.opi = opi;
@@ -126,15 +126,9 @@ public class WizardDevicesTxt extends JDialog {
 	}
 	
 	private void InitComponents() {
-		setBounds(100, 100, 305, 588);
+		setBounds(100, 100, 330, 625);
 	
-		JLabel lblType = new JLabel("Type");
-		
-		rdbtnRGB = new JRadioButton("RGB");
-		buttonGroup.add(rdbtnRGB);
-		rdbtnRGB.setSelected(true);
-		rdbtnRGBW = new JRadioButton("RGBW");
-		buttonGroup.add(rdbtnRGBW);
+		JLabel lblType = new JLabel("Type / Mapping");
 		
 		lblCount = new JLabel("Pixel count");
 		
@@ -212,6 +206,18 @@ public class WizardDevicesTxt extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		
+		comboBoxType = new JComboBox<String> ();
+		comboBoxType.setModel(new DefaultComboBoxModel<String>(new String[] {"WS2801", "WS2811", "WS2812", "WS2812B", "WS2813", "WS2815", "SK6812", "SK6812W", "UCS1903", "UCS2903", "CS8812", "APA102", "SK9822", "P9813"}));
+		comboBoxType.setSelectedIndex(3);
+		
+		comboBoxMap = new JComboBox<String>();
+		comboBoxMap.setModel(new DefaultComboBoxModel<String>(new String[] {"default", "RGB", "RBG", "GRB", "GBR", "BRG", "BGR"}));
+		
+		comboBoxTestPattern = new JComboBox<String> ();
+		comboBoxTestPattern.setModel(new DefaultComboBoxModel<String>(new String[] {"None", "Rainbow cycle", "Theater chase", "Colour wipe", "Scanner", "Fade"}));
+		
+		JLabel lblTestPattern = new JLabel("Test pattern");
 
 		GroupLayout groupLayout = new GroupLayout(contentPanel);
 		groupLayout.setHorizontalGroup(
@@ -221,30 +227,28 @@ public class WizardDevicesTxt extends JDialog {
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblType)
+								.addComponent(lblOutputs)
+								.addComponent(lblCount)
+								.addComponent(lblStartUniverse))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblType)
-										.addComponent(lblOutputs)
-										.addComponent(lblCount))
-									.addGap(24)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(rdbtnRGB)
-										.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-											.addComponent(formattedTextFieldPixelCount, Alignment.LEADING)
-											.addComponent(spinnerActiveOutput, Alignment.LEADING)
-											.addComponent(formattedTextFieldGroupSize, Alignment.LEADING)))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblUniversesPerPort)
-										.addComponent(rdbtnRGBW))
-									.addPreferredGap(ComponentPlacement.RELATED, 54, Short.MAX_VALUE))
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+										.addComponent(formattedTextFieldStartUniverse)
+										.addGroup(groupLayout.createSequentialGroup()
+											.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+												.addComponent(formattedTextFieldGroupSize, Alignment.LEADING)
+												.addComponent(formattedTextFieldPixelCount, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addComponent(lblUniversesPerPort)))
+									.addGap(18)
+									.addComponent(lblProtocol))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblStartUniverse)
+									.addComponent(comboBoxType, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(formattedTextFieldStartUniverse, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblProtocol)
-									.addGap(12))))
+									.addComponent(comboBoxMap, 0, 81, Short.MAX_VALUE))))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(22)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
@@ -280,7 +284,7 @@ public class WizardDevicesTxt extends JDialog {
 									.addComponent(lblPort8)
 									.addGap(18)
 									.addComponent(lblUniversePort8))
-							.addGroup(groupLayout.createSequentialGroup()
+								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(lblPort9)
 									.addGap(18)
 									.addComponent(lblUniversePort9))
@@ -310,106 +314,113 @@ public class WizardDevicesTxt extends JDialog {
 									.addComponent(lblUniversePort15))
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(lblPort16)
-									.addGap(18)
-									.addComponent(lblUniversePort16)))
-							.addGap(69))
+									.addGap(70)
+									.addComponent(lblUniversePort16))))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(lblGroupSize)))
+							.addComponent(lblGroupSize))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblTestPattern)
+							.addGap(18)
+							.addComponent(comboBoxTestPattern, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
-				groupLayout.createParallelGroup(Alignment.LEADING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblType)
-								.addComponent(rdbtnRGB)
-								.addComponent(rdbtnRGBW))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblCount)
-								.addComponent(formattedTextFieldPixelCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblUniversesPerPort))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblGroupSize)
-								.addComponent(formattedTextFieldGroupSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblOutputs)
-								.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblStartUniverse)
-								.addComponent(formattedTextFieldStartUniverse, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblProtocol))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort1)
-								.addComponent(lblUniversePort1))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort2)
-								.addComponent(lblUniversePort2))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort3)
-								.addComponent(lblUniversePort3))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort4)
-								.addComponent(lblUniversePort4))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort5)
-								.addComponent(lblUniversePort5))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort6)
-								.addComponent(lblUniversePort6))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort7)
-								.addComponent(lblUniversePort7))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort8)
-								.addComponent(lblUniversePort8))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort9)
-								.addComponent(lblUniversePort9))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort10)
-								.addComponent(lblUniversePort10))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort11)
-								.addComponent(lblUniversePort11))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort12)
-								.addComponent(lblUniversePort12))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort13)
-								.addComponent(lblUniversePort13))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort14)
-								.addComponent(lblUniversePort14))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort15)
-								.addComponent(lblUniversePort15))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPort16)
-								.addComponent(lblUniversePort16))
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblType)
+						.addComponent(comboBoxType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBoxMap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblCount)
+						.addComponent(formattedTextFieldPixelCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblUniversesPerPort))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblGroupSize)
+						.addComponent(formattedTextFieldGroupSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblOutputs)
+						.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblStartUniverse)
+						.addComponent(formattedTextFieldStartUniverse, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblProtocol))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort1)
+						.addComponent(lblUniversePort1))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort2)
+						.addComponent(lblUniversePort2))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort3)
+						.addComponent(lblUniversePort3))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort4)
+						.addComponent(lblUniversePort4))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort5)
+						.addComponent(lblUniversePort5))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort6)
+						.addComponent(lblUniversePort6))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort7)
+						.addComponent(lblUniversePort7))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort8)
+						.addComponent(lblUniversePort8))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort9)
+						.addComponent(lblUniversePort9))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort10)
+						.addComponent(lblUniversePort10))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort11)
+						.addComponent(lblUniversePort11))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort12)
+						.addComponent(lblUniversePort12))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort13)
+						.addComponent(lblUniversePort13))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort14)
+						.addComponent(lblUniversePort14))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort15)
+						.addComponent(lblUniversePort15))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPort16)
+						.addComponent(lblUniversePort16))
+					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblTestPattern)
+						.addComponent(comboBoxTestPattern, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+		);
 		
 		contentPanel.setLayout(groupLayout);
 
@@ -440,34 +451,18 @@ public class WizardDevicesTxt extends JDialog {
 			}
 		});
 		
-		rdbtnRGB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (rdbtnRGB.isSelected()) {
-					ledsPerPixel = 3;
-					formatterCount.setMaximum(4 * 170);
-					update();
-				}
-			}
-		});
-		
-		rdbtnRGBW.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (rdbtnRGBW.isSelected()) {
-					ledsPerPixel = 4;
-					formatterCount.setMaximum(4 * 128);
-					if ((int)formattedTextFieldPixelCount.getValue() > (4 * 128)) {
-						formattedTextFieldPixelCount.setValue(4 * 128);
-					}
-					update();
-				}
-			}
-		});
-		
 		spinnerActiveOutput.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if ((maxPorts == 8) && ((int) spinnerActiveOutput.getValue() > 8)) {
 					spinnerActiveOutput.setValue((int)8);
 				}
+				update();
+			}
+		});
+		
+		comboBoxType.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				comboBoxMap.setSelectedIndex(0);
 				update();
 			}
 		});
@@ -506,7 +501,7 @@ public class WizardDevicesTxt extends JDialog {
 			}
 		});
 	}
-	
+		
 	private void load() {
 		if (opi != null) {
 			final String txt = opi.getTxt("devices.txt");
@@ -515,18 +510,16 @@ public class WizardDevicesTxt extends JDialog {
 				for (int i = 0; i < lines.length; i++) {
 					final String line = lines[i];
 					if (line.contains("led_type")) {
-						if (line.toUpperCase().contains("SK6812W")) {
-							rdbtnRGBW.setSelected(true);
-							rdbtnRGB.setEnabled(false);
-						} else {
-							rdbtnRGB.setSelected(true);
-							rdbtnRGBW.setEnabled(false);
-						}
+						comboBoxType.setSelectedItem(Properties.getString(line).toUpperCase());
 						continue;
 					}
 					if (line.contains("led_count")) {
 						formattedTextFieldPixelCount.setValue(Properties.getInt(line));
 						continue;
+					}
+					if (line.contains("led_rgb_mapping")) {
+						comboBoxMap.setSelectedItem(Properties.getString(line).toUpperCase());
+						continue;	
 					}
 					if (line.contains("active_out")) {
 						spinnerActiveOutput.setValue(Properties.getInt(line));
@@ -543,6 +536,10 @@ public class WizardDevicesTxt extends JDialog {
 						}
 						continue;
 					}
+					
+					if (line.contains("test_pattern")) {
+						comboBoxTestPattern.setSelectedIndex(Properties.getInt(line));
+					}
 				}
 			}
 		}
@@ -553,6 +550,12 @@ public class WizardDevicesTxt extends JDialog {
 	private void update() {
 		final int count = (int) formattedTextFieldPixelCount.getValue();
 		final int groupingCount = (int) formattedTextFieldGroupSize.getValue();
+		
+		if (comboBoxType.getSelectedItem().toString().equals("SK6812W")) {
+			ledsPerPixel = 4;
+		} else {
+			ledsPerPixel = 3;
+		}
 		
 		if ((groupingCount == 0) || (groupingCount > count)){
 			formattedTextFieldGroupSize.setValue(count);
@@ -718,6 +721,13 @@ public class WizardDevicesTxt extends JDialog {
 		if (opi != null) {
 			StringBuffer devicesTxtAppend = new StringBuffer();		
 			devicesTxtAppend.append(String.format("led_count=%s\n", formattedTextFieldPixelCount.getText()));
+			devicesTxtAppend.append(String.format("led_type=%s\n", comboBoxType.getSelectedItem().toString()));
+			final String mapping = comboBoxMap.getSelectedItem().toString();
+			if (mapping.toLowerCase().equals("default")) {
+				
+			} else {
+				devicesTxtAppend.append(String.format("led_rgb_mapping=%s\n", mapping));	
+			}
 			devicesTxtAppend.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
 			//
 			devicesTxtAppend.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
@@ -743,9 +753,13 @@ public class WizardDevicesTxt extends JDialog {
 			devicesTxtAppend.append(String.format("led_grouping=%s\n", (int) formattedTextFieldGroupSize.getValue() != 1 ? "1" : "0"));
 			devicesTxtAppend.append(String.format("led_group_count=%d\n", (int) formattedTextFieldGroupSize.getValue()));
 			
+			devicesTxtAppend.append(String.format("test_pattern=%s\n", comboBoxTestPattern.getSelectedIndex()));
+			
 			String txt = opi.getTxt("devices.txt");
 			
 			txt = txt.replaceAll("start_uni_port_", "#");
+			txt = txt.replaceAll("led_rgb_mapping", "#");
+			txt = txt.replaceAll("test_pattern", "#");
 			
 			try {
 				opi.doSave(txt + "\n" + devicesTxtAppend.toString());
@@ -758,6 +772,7 @@ public class WizardDevicesTxt extends JDialog {
 			}
 			
 			System.out.println(devicesTxtAppend.toString());
+			load();
 		}
 	}
 }
