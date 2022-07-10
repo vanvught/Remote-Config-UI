@@ -261,9 +261,6 @@ public class RemoteConfig extends JFrame {
 								if (txt.startsWith("devices")) {
 									doWizardDevices(opi);
 								}
-								if (txt.startsWith("ddpdisp")) {
-									doWizardDdpdisplay(opi);
-								}
 								if (txt.startsWith("gps")) {
 									doWizardGps(opi);
 								}
@@ -979,15 +976,7 @@ public class RemoteConfig extends JFrame {
 			wizard.setVisible(true);
 		}
 	}
-	
-	private void doWizardDdpdisplay(OrangePi opi) {
-		if (lblNodeId.getText().trim().length() != 0) {
-			WizardDdpdisplayTxt wizard = new WizardDdpdisplayTxt(lblNodeId.getText(), opi, this);
-			wizard.setModal(true);
-			wizard.setVisible(true);
-		}
-	}
-	
+		
 	private void doWizardGps(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
 			WizardGpsTxt wizard = new WizardGpsTxt(lblNodeId.getText(), opi, this);

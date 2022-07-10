@@ -60,7 +60,8 @@ public class WizardDevicesTxt extends JDialog {
 	private NumberFormatter formatterCount;
 	private JFormattedTextField formattedTextFieldPixelCount;
 	private JLabel lblStartUniverse;
-	
+	private boolean doDisableStartUniverse = false;
+
 	private JLabel lblPort1;
 	private JLabel lblPort2;
 	private JLabel lblPort3;
@@ -120,6 +121,25 @@ public class WizardDevicesTxt extends JDialog {
 		if (nodeId.toLowerCase().contains("art")) {
 			lblProtocol.setText("Art-Net 4");
 			formatterStartUniverse.setMinimum(0);
+		}
+		
+		
+		if (nodeId.toLowerCase().contains("ddp")) {
+			lblProtocol.setText("DDP Display");
+			doDisableStartUniverse = true;
+		}
+		
+		if (nodeId.toLowerCase().contains("pusher")) {
+			lblProtocol.setText("PixelPusher");
+			doDisableStartUniverse = true;
+		}
+		
+		if (doDisableStartUniverse) {
+			formatterStartUniverse.setMinimum(-1);
+			formattedTextFieldStartUniverse.setValue(-1);
+			formattedTextFieldStartUniverse.setEnabled(false);
+			formattedTextFieldStartUniverse.setVisible(false);
+			lblStartUniverse.setText("");
 		}
 		
 		load();
@@ -243,7 +263,7 @@ public class WizardDevicesTxt extends JDialog {
 												.addComponent(formattedTextFieldPixelCount, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
 											.addPreferredGap(ComponentPlacement.RELATED)
 											.addComponent(lblUniversesPerPort)))
-									.addGap(18)
+									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(lblProtocol))
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(comboBoxType, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
@@ -571,7 +591,12 @@ public class WizardDevicesTxt extends JDialog {
 			universeStart = ArtNet.getStartUniverse(universeStart);
 			universes = 4;
 		} else {
-			universes = 1 + (groups/ (512 / ledsPerPixel));
+			if (doDisableStartUniverse) {
+				universeStart = groups;
+				universes = universeStart;
+			} else {
+				universes = 1 + (groups / (512 / ledsPerPixel));
+			}
 		}
 		
 		lblUniversesPerPort.setText("[" + String.valueOf(universes) + "]");
@@ -729,25 +754,27 @@ public class WizardDevicesTxt extends JDialog {
 				devicesTxtAppend.append(String.format("led_rgb_mapping=%s\n", mapping));	
 			}
 			devicesTxtAppend.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
-			//
-			devicesTxtAppend.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_2=%s\n", lblUniversePort2.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_3=%s\n", lblUniversePort3.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_4=%s\n", lblUniversePort4.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_5=%s\n", lblUniversePort5.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_6=%s\n", lblUniversePort6.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_7=%s\n", lblUniversePort7.getText()));
-			devicesTxtAppend.append(String.format("start_uni_port_8=%s\n", lblUniversePort8.getText()));
-			//
-			if ((int) spinnerActiveOutput.getValue() > 8) {
-				devicesTxtAppend.append(String.format("start_uni_port_9=%s\n", lblUniversePort9.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_10=%s\n", lblUniversePort10.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_11=%s\n", lblUniversePort11.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_12=%s\n", lblUniversePort12.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_13=%s\n", lblUniversePort13.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_14=%s\n", lblUniversePort14.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_15=%s\n", lblUniversePort15.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_16=%s\n", lblUniversePort16.getText()));
+			
+			if (!doDisableStartUniverse) {
+				devicesTxtAppend.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_2=%s\n", lblUniversePort2.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_3=%s\n", lblUniversePort3.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_4=%s\n", lblUniversePort4.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_5=%s\n", lblUniversePort5.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_6=%s\n", lblUniversePort6.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_7=%s\n", lblUniversePort7.getText()));
+				devicesTxtAppend.append(String.format("start_uni_port_8=%s\n", lblUniversePort8.getText()));
+				//
+				if ((int) spinnerActiveOutput.getValue() > 8) {
+					devicesTxtAppend.append(String.format("start_uni_port_9=%s\n", lblUniversePort9.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_10=%s\n", lblUniversePort10.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_11=%s\n", lblUniversePort11.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_12=%s\n", lblUniversePort12.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_13=%s\n", lblUniversePort13.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_14=%s\n", lblUniversePort14.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_15=%s\n", lblUniversePort15.getText()));
+					devicesTxtAppend.append(String.format("start_uni_port_16=%s\n", lblUniversePort16.getText()));
+				}
 			}
 			
 			devicesTxtAppend.append(String.format("led_grouping=%s\n", (int) formattedTextFieldGroupSize.getValue() != 1 ? "1" : "0"));

@@ -33,8 +33,9 @@ public class OrangePi {
 	private static final String RCONFIG_TXT = "rconfig.txt";
 	private static final String DISPLAY_TXT = "display.txt";
 	private static final String NETWORK_TXT = "network.txt";
-	private static final String[] NODE_TXT = {"artnet.txt", "e131.txt", "osc.txt", "ltc.txt", "oscclnt.txt", "", "show.txt", "ddpdisp.txt", "node.txt"};
-	private static final String[] NODEVALUES = {"Art-Net", "sACN E1.31", "OSC Server", "LTC", "OSC Client", "RDMNet LLRP Only", "Showfile", "DDP", "Node"};
+											//		0			1				2			2			4			5						6		7		8				9
+	private static final String[] NODE_TXT   = {"artnet.txt", "e131.txt",   "osc.txt",    "ltc.txt", "oscclnt.txt", "",                 "show.txt", "",    "",            "node.txt"};
+	private static final String[] NODEVALUES = {"Art-Net",    "sACN E1.31", "OSC Server", "LTC",     "OSC Client",  "RDMNet LLRP Only", "Showfile", "DDP", "PixelPusher", "Node"};
 	private static final String[] OUTPUT_TXT = {"params.txt", "devices.txt", "mon.txt", "serial.txt", "rgbpanel.txt", ""};
 	private static final String LDISPLAY_TXT = "ldisplay.txt";
 	private static final String TCNET_TXT = "tcnet.txt";
@@ -417,7 +418,7 @@ public class OrangePi {
 		for (int i = 0; i < NODEVALUES.length; i++) {
 			if (type.equals(NODEVALUES[i])) {
 				nodeType = NODE_TXT[i];
-				if ((i == 0) || (i == 1) || (i == 7)) {
+				if ((i == 0) || (i == 1) || (i == 7) || (i == 8)) {
 					nodeDisplay = DISPLAY_TXT;
 				}
 				return true;
