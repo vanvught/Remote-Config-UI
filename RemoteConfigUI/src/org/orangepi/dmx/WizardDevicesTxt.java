@@ -44,6 +44,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
+import javax.swing.JCheckBox;
 
 public class WizardDevicesTxt extends JDialog {
 	private final JPanel contentPanel = new JPanel();
@@ -106,6 +107,8 @@ public class WizardDevicesTxt extends JDialog {
 	private JComboBox<String> comboBoxType;
 	private JComboBox<String> comboBoxMap;
 	private JComboBox<String> comboBoxTestPattern;
+	private JCheckBox chckbxGammaCorrection;
+	private JComboBox<String> comboBoxGammaValue;
 
 	public WizardDevicesTxt(String nodeId, OrangePi opi, RemoteConfig remoteConfig) {
 		this.opi = opi;
@@ -146,7 +149,7 @@ public class WizardDevicesTxt extends JDialog {
 	}
 	
 	private void InitComponents() {
-		setBounds(100, 100, 330, 625);
+		setBounds(100, 100, 330, 660);
 	
 		JLabel lblType = new JLabel("Type / Mapping");
 		
@@ -232,12 +235,17 @@ public class WizardDevicesTxt extends JDialog {
 		comboBoxType.setSelectedIndex(3);
 		
 		comboBoxMap = new JComboBox<String>();
-		comboBoxMap.setModel(new DefaultComboBoxModel<String>(new String[] {"default", "RGB", "RBG", "GRB", "GBR", "BRG", "BGR"}));
+		comboBoxMap.setModel(new DefaultComboBoxModel<String>(new String[] {"<default>", "RGB", "RBG", "GRB", "GBR", "BRG", "BGR"}));
 		
 		comboBoxTestPattern = new JComboBox<String> ();
 		comboBoxTestPattern.setModel(new DefaultComboBoxModel<String>(new String[] {"None", "Rainbow cycle", "Theater chase", "Colour wipe", "Scanner", "Fade"}));
 		
 		JLabel lblTestPattern = new JLabel("Test pattern");
+		
+		chckbxGammaCorrection = new JCheckBox("Gamma correction");
+		
+		comboBoxGammaValue = new JComboBox<String> ();
+		comboBoxGammaValue.setModel(new DefaultComboBoxModel<String>(new String[] {"<default>", "2.0", "2.1", "2.2", "2.3", "2.4", "2.5"}));
 
 		GroupLayout groupLayout = new GroupLayout(contentPanel);
 		groupLayout.setHorizontalGroup(
@@ -268,7 +276,7 @@ public class WizardDevicesTxt extends JDialog {
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(comboBoxType, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(comboBoxMap, 0, 81, Short.MAX_VALUE))))
+									.addComponent(comboBoxMap, 0, 87, Short.MAX_VALUE))))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(22)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
@@ -341,9 +349,16 @@ public class WizardDevicesTxt extends JDialog {
 							.addComponent(lblGroupSize))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(lblTestPattern)
-							.addGap(18)
-							.addComponent(comboBoxTestPattern, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(chckbxGammaCorrection)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(comboBoxGammaValue, 0, 115, Short.MAX_VALUE))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(lblTestPattern)
+									.addGap(18)
+									.addComponent(comboBoxTestPattern, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+							.addPreferredGap(ComponentPlacement.RELATED, 46, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -436,7 +451,11 @@ public class WizardDevicesTxt extends JDialog {
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblPort16)
 						.addComponent(lblUniversePort16))
-					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(chckbxGammaCorrection)
+						.addComponent(comboBoxGammaValue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblTestPattern)
 						.addComponent(comboBoxTestPattern, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
@@ -529,26 +548,32 @@ public class WizardDevicesTxt extends JDialog {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
 					final String line = lines[i];
+					
 					if (line.contains("led_type")) {
 						comboBoxType.setSelectedItem(Properties.getString(line).toUpperCase());
 						continue;
 					}
+					
 					if (line.contains("led_count")) {
 						formattedTextFieldPixelCount.setValue(Properties.getInt(line));
 						continue;
 					}
+					
 					if (line.contains("led_rgb_mapping")) {
 						comboBoxMap.setSelectedItem(Properties.getString(line).toUpperCase());
 						continue;	
 					}
+					
 					if (line.contains("active_out")) {
 						spinnerActiveOutput.setValue(Properties.getInt(line));
 						continue;
 					}
+					
 					if (line.contains("start_uni_port_16")) {
 						maxPorts = 16;
 						continue;
 					}
+					
 					if (line.contains("start_uni_port_1")) {
 						final int lastIndex = line.lastIndexOf("_1=");
 						if (lastIndex != -1) {
@@ -557,8 +582,19 @@ public class WizardDevicesTxt extends JDialog {
 						continue;
 					}
 					
+					if (line.contains("gamma_correction")) {
+						chckbxGammaCorrection.setSelected(Properties.getBool(line));
+						continue;
+					}
+					
+					if (line.contains("gamma_value")) {
+						comboBoxGammaValue.setSelectedItem(Properties.getString(line).toLowerCase());
+						continue;
+					}
+					
 					if (line.contains("test_pattern")) {
 						comboBoxTestPattern.setSelectedIndex(Properties.getInt(line));
+						continue;
 					}
 				}
 			}
@@ -747,12 +783,14 @@ public class WizardDevicesTxt extends JDialog {
 			StringBuffer devicesTxtAppend = new StringBuffer();		
 			devicesTxtAppend.append(String.format("led_count=%s\n", formattedTextFieldPixelCount.getText()));
 			devicesTxtAppend.append(String.format("led_type=%s\n", comboBoxType.getSelectedItem().toString()));
+			
 			final String mapping = comboBoxMap.getSelectedItem().toString();
-			if (mapping.toLowerCase().equals("default")) {
-				
+			if (mapping.toLowerCase().equals("<default>")) {
+				// Nothing
 			} else {
 				devicesTxtAppend.append(String.format("led_rgb_mapping=%s\n", mapping));	
 			}
+			
 			devicesTxtAppend.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
 			
 			if (!doDisableStartUniverse) {
@@ -780,6 +818,18 @@ public class WizardDevicesTxt extends JDialog {
 			devicesTxtAppend.append(String.format("led_grouping=%s\n", (int) formattedTextFieldGroupSize.getValue() != 1 ? "1" : "0"));
 			devicesTxtAppend.append(String.format("led_group_count=%d\n", (int) formattedTextFieldGroupSize.getValue()));
 			
+			if (chckbxGammaCorrection.isSelected()) {
+				devicesTxtAppend.append(String.format("gamma_correction=1\n"));
+			}
+			
+			final String gammaValue = comboBoxGammaValue.getSelectedItem().toString();
+			
+			if (gammaValue.toLowerCase().equals("<default>")) {
+				// Nothing
+			} else {
+				devicesTxtAppend.append(String.format("gamma_value=%s\n", gammaValue));	
+			}
+			
 			devicesTxtAppend.append(String.format("test_pattern=%s\n", comboBoxTestPattern.getSelectedIndex()));
 			
 			String txt = opi.getTxt("devices.txt");
@@ -787,6 +837,7 @@ public class WizardDevicesTxt extends JDialog {
 			txt = txt.replaceAll("start_uni_port_", "#");
 			txt = txt.replaceAll("led_rgb_mapping", "#");
 			txt = txt.replaceAll("test_pattern", "#");
+			txt = txt.replaceAll("gamma_", "#");
 			
 			try {
 				opi.doSave(txt + "\n" + devicesTxtAppend.toString());
