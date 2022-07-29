@@ -109,7 +109,7 @@ public class WizardE131Txt extends JDialog {
 	}
 	
 	private void initComponents() {
-		setBounds(100, 100, 424, 250);
+		setBounds(100, 100, 403, 230);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -128,16 +128,12 @@ public class WizardE131Txt extends JDialog {
 		JLabel lblUniversePortD = new JLabel("Port D");
 		
 		formattedTextFieldPortA = new JFormattedTextField(formatterUniverse);
-		formattedTextFieldPortA.setText("1");
 		formattedTextFieldPortA.setColumns(6);
 		formattedTextFieldPortB = new JFormattedTextField(formatterUniverse);
-		formattedTextFieldPortB.setText("2");
 		formattedTextFieldPortB.setColumns(6);
 		formattedTextFieldPortC = new JFormattedTextField(formatterUniverse);
-		formattedTextFieldPortC.setText("3");
 		formattedTextFieldPortC.setColumns(6);
 		formattedTextFieldPortD = new JFormattedTextField(formatterUniverse);
-		formattedTextFieldPortD.setText("4");
 		formattedTextFieldPortD.setColumns(6);
 		
 		comboBoxMergePortA = new JComboBox<String> ();
@@ -195,91 +191,130 @@ public class WizardE131Txt extends JDialog {
 		lblDirection = new JLabel("Direction");
 		
 		lblMerge = new JLabel("Merge");
-				
+
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
+		
 		gl_contentPanel.setHorizontalGroup(
+				gl_contentPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPanel.createSequentialGroup()
+						.addGap(6)
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblUniversePortA, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversePortB, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversePortC, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniversePortD, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblUniverse))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblDirection))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblMerge))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addComponent(formattedTextFieldPriorityPortA, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPriorityPortB, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPriorityPortC, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextFieldPriorityPortD, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblPriority))
+						.addContainerGap(17, Short.MAX_VALUE))
+				);
+		
+		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING, false)
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblDirection)
+										.addComponent(lblMerge)
+										.addComponent(lblUniverse))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addComponent(lblPriority)
+									.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+										.addGroup(gl_contentPanel.createSequentialGroup()
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+												.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+												.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+										.addGroup(gl_contentPanel.createSequentialGroup()
+											.addGap(6)
+											.addComponent(formattedTextFieldPriorityPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
+							.addPreferredGap(ComponentPlacement.RELATED))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addComponent(lblUniversePortA)
+							.addGap(12)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblUniversePortA, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortB, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortC, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortD, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniverse))
-					.addGap(18)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblDirection))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMerge))
-					.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(formattedTextFieldPriorityPortD, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortC, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortB, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortA, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblPriority))
-					.addGap(14))
-		);
-		gl_contentPanel.setVerticalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPriority)
-						.addComponent(lblUniverse)
-						.addComponent(lblDirection)
-						.addComponent(lblMerge))
-					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+							.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(5)
+							.addComponent(lblUniversePortB))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(formattedTextFieldPriorityPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGap(34)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblUniversePortB)
-								.addComponent(formattedTextFieldPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(comboBoxDirectionPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(comboBoxMergePortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedTextFieldPriorityPortB, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(formattedTextFieldPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblUniversePortA)
-							.addComponent(comboBoxDirectionPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(comboBoxMergePortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(formattedTextFieldPriorityPortA, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-					.addGap(7)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortC)
-						.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(7)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblUniversePortD)
-						.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextFieldPriorityPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(11))
+								.addComponent(comboBoxMergePortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(11)
+							.addComponent(lblUniversePortC))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(6)
+							.addComponent(formattedTextFieldPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(6)
+							.addComponent(formattedTextFieldPriorityPortC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(comboBoxMergePortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBoxDirectionPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(11)
+							.addComponent(lblUniversePortD))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(6)
+							.addComponent(formattedTextFieldPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(6)
+							.addComponent(formattedTextFieldPriorityPortD, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addGap(75))
 		);
+		gl_contentPanel.linkSize(SwingConstants.VERTICAL, new Component[] {formattedTextFieldPriorityPortA, formattedTextFieldPriorityPortB, formattedTextFieldPriorityPortC, formattedTextFieldPriorityPortD});
+		gl_contentPanel.linkSize(SwingConstants.VERTICAL, new Component[] {comboBoxMergePortA, comboBoxMergePortB, comboBoxMergePortC, comboBoxMergePortD});
+		gl_contentPanel.linkSize(SwingConstants.VERTICAL, new Component[] {comboBoxDirectionPortA, comboBoxDirectionPortB, comboBoxDirectionPortC, comboBoxDirectionPortD});
+		gl_contentPanel.linkSize(SwingConstants.VERTICAL, new Component[] {formattedTextFieldPortA, formattedTextFieldPortB, formattedTextFieldPortC, formattedTextFieldPortD});
 		gl_contentPanel.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedTextFieldPortA, formattedTextFieldPortB, formattedTextFieldPortC, formattedTextFieldPortD});
 		gl_contentPanel.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblUniversePortA, lblUniversePortB, lblUniversePortC, lblUniversePortD});
-		
+
 		contentPanel.setLayout(gl_contentPanel);
 		{
 			JPanel buttonPane = new JPanel();
