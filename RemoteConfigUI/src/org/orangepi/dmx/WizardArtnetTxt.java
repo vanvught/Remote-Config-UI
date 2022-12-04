@@ -290,7 +290,7 @@ public class WizardArtnetTxt extends JDialog {
 		JLabel lblFailsafe = new JLabel("Failsafe");
 		
 		comboBoxFailsafe = new JComboBox<String>();
-		comboBoxFailsafe.setModel(new DefaultComboBoxModel<String>(new String[] {"Hold", "Zero", "Full"}));
+		comboBoxFailsafe.setModel(new DefaultComboBoxModel<String>(new String[] {"Hold", "Zero", "Full", "Scene"}));
 										
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
@@ -641,6 +641,8 @@ public class WizardArtnetTxt extends JDialog {
 							comboBoxFailsafe.setSelectedIndex(1);
 						} else if (value.equals("on")) {
 							comboBoxFailsafe.setSelectedIndex(2);
+						} else if (value.equals("playback")) {
+							comboBoxFailsafe.setSelectedIndex(3);
 						} else {
 							comboBoxFailsafe.setSelectedIndex(0);
 						}
@@ -900,6 +902,10 @@ public class WizardArtnetTxt extends JDialog {
 		
 		if (comboBoxFailsafe.getSelectedItem().toString().toLowerCase().equals("full")) {
 			return "on";
+		}
+		
+		if (comboBoxFailsafe.getSelectedItem().toString().toLowerCase().equals("scene")) {
+			return "playback";
 		}
 		
 		return "hold";

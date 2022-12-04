@@ -95,9 +95,6 @@ public class OrangePi {
 			if (isValid) {
 				if (Mode[0].equals("DMX") || Mode[0].equals("RDM")) {
 					nodeOutput = OUTPUT_TXT[0];
-					if (Mode[0].equals("RDM")) {
-						nodeRDM = RDM_TXT;
-					}
 				} else if ((Mode[0].equals("Pixel")) && (!nodeType.contains("ddp"))){
 					nodeOutput = OUTPUT_TXT[1];
 				} else if (Mode[0].equals("Monitor")) {

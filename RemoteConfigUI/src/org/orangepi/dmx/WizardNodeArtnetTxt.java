@@ -511,7 +511,7 @@ public class WizardNodeArtnetTxt extends JDialog {
 		
 	private void save() {
 		if (opi != null) {
-			StringBuffer txt = new StringBuffer(opi.getTxt(TXT_FILE));
+			StringBuffer txt = new StringBuffer("#" + TXT_FILE);
 			txt.append("\n");
 			//
 			final String shortName = textFieldShortName.getText();	
