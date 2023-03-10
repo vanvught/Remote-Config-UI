@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -213,7 +213,6 @@ public class RemoteConfig extends JFrame {
 						lblDisplayName.setText(opi.getNodeDisplayName());
 						
 						String s = path.getLastPathComponent().toString();
-//						System.out.println(s);
 						String text = opi.getTxt(s);
 
 						if (text != null) {
@@ -641,54 +640,54 @@ public class RemoteConfig extends JFrame {
 
 		mntmExit = new JMenuItem("Exit");
 
-		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.ALT_MASK));
+		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.ALT_DOWN_MASK));
 		mnFile.add(mntmExit);
 
 		mnAction = new JMenu("Action");
 		menuBar.add(mnAction);
 
 		mntmDisplayOnoff = new JMenuItem("Display On/Off");
-		mntmDisplayOnoff.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+		mntmDisplayOnoff.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmDisplayOnoff);
 		
 		mntmFactoryDefaults = new JMenuItem("Factory defaults");
-		mntmFactoryDefaults.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+		mntmFactoryDefaults.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmFactoryDefaults);
 
 		mntmReboot = new JMenuItem("Reboot");
-		mntmReboot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+		mntmReboot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmReboot);
 
 		mntmSave = new JMenuItem("Save");
 		mnAction.add(mntmSave);
-		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 
 		mntmTftp = new JMenuItem("TFTP On/Off");
-		mntmTftp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
+		mntmTftp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmTftp);
 
 		mntmUptime = new JMenuItem("Uptime");
-		mntmUptime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+		mntmUptime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmUptime);
 
 		mntmVersion = new JMenuItem("Version");
-		mntmVersion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
+		mntmVersion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmVersion);
 
 		mnRun = new JMenu("Run");
 		menuBar.add(mnRun);
 
 		mntmGlobalControl = new JMenuItem("Global control");
-		mntmGlobalControl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
+		mntmGlobalControl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_DOWN_MASK));
 		mnRun.add(mntmGlobalControl);
 
 		mntmDmxTransmit = new JMenuItem("DMX Transmit");
-		mntmDmxTransmit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK));
+		mntmDmxTransmit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK));
 		mnRun.add(mntmDmxTransmit);
 
 		mntmPixelTextPatterns = new JMenuItem("Pixel Controller Test Patterns");
 
-		mntmPixelTextPatterns.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_MASK));
+		mntmPixelTextPatterns.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_DOWN_MASK));
 		mnRun.add(mntmPixelTextPatterns);
 
 		mnLTC = new JMenu("LTC");
@@ -696,26 +695,26 @@ public class RemoteConfig extends JFrame {
 
 		mntmLtcGenerator = new JMenuItem("Generator");
 		mnLTC.add(mntmLtcGenerator);
-		mntmLtcGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
+		mntmLtcGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_DOWN_MASK));
 
 		mntmSytemTime = new JMenuItem("System time");
-		mntmSytemTime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
+		mntmSytemTime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK));
 		mnLTC.add(mntmSytemTime);
 
 		mntmTCNet = new JMenuItem("TCNet");
-		mntmTCNet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK));
+		mntmTCNet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK));
 		mnLTC.add(mntmTCNet);
 
 		mntmRgbDisplay = new JMenuItem("RGB Display");
-		mntmRgbDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK));
+		mntmRgbDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
 		mnLTC.add(mntmRgbDisplay);
 
 		mntmMIDI = new JMenuItem("MIDI");
-		mntmMIDI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.ALT_MASK));
+		mntmMIDI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.ALT_DOWN_MASK));
 		mnLTC.add(mntmMIDI);
 
 		mntmTftpClient = new JMenuItem("TFTP Client");
-		mntmTftpClient.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_MASK));
+		mntmTftpClient.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
 		mnRun.add(mntmTftpClient);
 
 		JMenu mnView = new JMenu("View");
@@ -723,17 +722,17 @@ public class RemoteConfig extends JFrame {
 
 		mntmExpandAll = new JMenuItem("Expand All");
 
-		mntmExpandAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_MASK));
+		mntmExpandAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
 		mnView.add(mntmExpandAll);
 
 		mntmColl = new JMenuItem("Collapse All");
 
-		mntmColl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
+		mntmColl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK));
 		mnView.add(mntmColl);
 
 		mntmRefresh = new JMenuItem("Refresh");
 
-		mntmRefresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK));
+		mntmRefresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
 		mnView.add(mntmRefresh);
 
 		mnWorkflow = new JMenu("Workflow");
@@ -758,7 +757,7 @@ public class RemoteConfig extends JFrame {
 		menuBar.add(mnHelp);
 
 		mntmAbout = new JMenuItem("About");
-		mntmAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK));
+		mntmAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK));
 
 		mnHelp.add(mntmAbout);
 		contentPane = new JPanel();
@@ -815,8 +814,8 @@ public class RemoteConfig extends JFrame {
 
 	private static boolean isRightClick(MouseEvent e) {
 		return (e.getButton() == MouseEvent.BUTTON3 || (System.getProperty("os.name").contains("Mac OS X")
-				&& (e.getModifiers() & InputEvent.BUTTON1_MASK) != 0
-				&& (e.getModifiers() & InputEvent.CTRL_MASK) != 0));
+				&& (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0
+				&& (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0));
 	}
 
 	private void doExit() {
@@ -1124,9 +1123,8 @@ public class RemoteConfig extends JFrame {
 				String nodeType = ((OrangePi) child.getUserObject()).getNodeType();
 
 				if (nodeType != null) {
-					if (nodeType.equals("node.txt")) {
-						System.out.println("nodeType=Node");
-						
+					System.out.println("nodeType=" + nodeType);
+					if (nodeType.equals("node.txt")) {						
 						DefaultMutableTreeNode nodePersonality = new DefaultMutableTreeNode(new DefaultMutableTreeNode(nodeType));
 					
 						nodePersonality.add(new DefaultMutableTreeNode("artnet.txt"));

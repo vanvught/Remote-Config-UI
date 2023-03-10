@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,9 @@ public class OrangePi {
 	private static final String RCONFIG_TXT = "rconfig.txt";
 	private static final String DISPLAY_TXT = "display.txt";
 	private static final String NETWORK_TXT = "network.txt";
-											//		0			1				2			2			4			5						6		7		8				9
-	private static final String[] NODE_TXT   = {"artnet.txt", "e131.txt",   "osc.txt",    "ltc.txt", "oscclnt.txt", "",                 "show.txt", "",    "",            "node.txt"};
-	private static final String[] NODEVALUES = {"Art-Net",    "sACN E1.31", "OSC Server", "LTC",     "OSC Client",  "RDMNet LLRP Only", "Showfile", "DDP", "PixelPusher", "Node"};
+											//  0			  1				2			  3			 4			    5					6		    7		8	   9              10		  11				 12
+	private static final String[] NODE_NAMES = {"Art-Net",    "sACN E1.31", "OSC Server", "LTC",     "OSC Client",  "RDMNet LLRP Only", "Showfile", "MIDI", "DDP", "PixelPusher", "Node",     "Bootloader TFTP", "RDM Responder"};
+	private static final String[] NODE_TXT   = {"artnet.txt", "e131.txt",   "osc.txt",    "ltc.txt", "oscclnt.txt", "",                 "show.txt", "",     "",    "",            "node.txt", "",                "rdm_device.txt"};
 	private static final String[] OUTPUT_TXT = {"params.txt", "devices.txt", "mon.txt", "serial.txt", "rgbpanel.txt", ""};
 	private static final String LDISPLAY_TXT = "ldisplay.txt";
 	private static final String TCNET_TXT = "tcnet.txt";
@@ -59,7 +59,7 @@ public class OrangePi {
 	private String nodeRemoteConfig = null;
 	private String nodeDisplay = null;
 	private String nodeNetwork = null;
-	private String nodeType = null;
+	private String nodeTxt = null;
 	private String nodeOutput = null;
 	private String nodeLtcDisplay = null;
 	private String nodeTCNet = null;
@@ -84,45 +84,46 @@ public class OrangePi {
 		
 		System.out.println("arg [" + arg + "]");
 	
-		String[] values = arg.split(",");
+		String[] listValues = arg.split(",");
 		
-		if (values.length >= 4) {
-			String[] Mode = values[2].split("\n");
-			isValid = isMapTypeValues(values[1]);	
+		if (listValues.length >= 4) {
+			isValid = isValidNode(listValues[1]);	
 			
-			System.out.println("Mode[0]=" + Mode[0] + "\nnodeType=" + nodeType);
+			System.out.println(isValid + " node=[" + listValues[1] + "] output=[" + listValues[2] + "]");
 			
 			if (isValid) {
-				if (Mode[0].equals("DMX") || Mode[0].equals("RDM")) {
+				String[] outputName = listValues[2].split("\n");
+				
+				if (outputName[0].equals("DMX") || outputName[0].equals("RDM")) {
 					nodeOutput = OUTPUT_TXT[0];
-				} else if ((Mode[0].equals("Pixel")) && (!nodeType.contains("ddp"))){
+				} else if ((outputName[0].equals("Pixel")) && (!nodeTxt.contains("ddp"))){
 					nodeOutput = OUTPUT_TXT[1];
-				} else if (Mode[0].equals("Monitor")) {
+				} else if (outputName[0].equals("Monitor")) {
 					nodeOutput = OUTPUT_TXT[2];
-				} else if (Mode[0].equals("TimeCode")) {
+				} else if (outputName[0].equals("TimeCode")) {
 					nodeLtcDisplay = LDISPLAY_TXT;
 					nodeTCNet = TCNET_TXT;
 					nodeGPS = GPS_TXT;
 					nodeETC = ETC_TXT;
-				} else if (Mode[0].equals("OSC")) {
-				} else if (Mode[0].equals("Config")) {
+				} else if (outputName[0].equals("OSC")) {
+				} else if (outputName[0].equals("Config")) {
 					//
-				} else if (Mode[0].equals("Stepper")) {
+				} else if (outputName[0].equals("Stepper")) {
 					nodeOutput = OUTPUT_TXT[1];
 					nodeSparkFun = SPARKFUN_TXT;
 					for (int i = 0; i < nodeMotors.length; i++) {
 						nodeMotors[i] = MOTORS_TXT[i];
 					}
 					nodeRDM = RDM_TXT;
-				} else if (Mode[0].equals("Player")) {
+				} else if (outputName[0].equals("Player")) {
 					// 
-				} else if (Mode[0].equals("Art-Net")) {
+				} else if (outputName[0].equals("Art-Net")) {
 					//
-				} else if (Mode[0].equals("Serial")) {
+				} else if (outputName[0].equals("Serial")) {
 					nodeOutput = OUTPUT_TXT[4];
-				} else if (Mode[0].equals("RGB Panel")) {
+				} else if (outputName[0].equals("RGB Panel")) {
 					nodeOutput = OUTPUT_TXT[5];	
-				} else if (Mode[0].equals("Pixel")) {
+				} else if (outputName[0].equals("Pixel")) {
 					//
 				} else {
 					isValid = false;
@@ -133,10 +134,10 @@ public class OrangePi {
 				nodeRemoteConfig = RCONFIG_TXT;
 				nodeNetwork = NETWORK_TXT;
 
-				if (values[0].matches(ipv4Pattern)) {
+				if (listValues[0].matches(ipv4Pattern)) {
 					try {
-						System.out.println("=> " + values[0]);
-						address = InetAddress.getByName(values[0]);
+						System.out.println("=> " + listValues[0]);
+						address = InetAddress.getByName(listValues[0]);
 					} catch (UnknownHostException e) {
 						isValid = false;
 						e.printStackTrace();
@@ -147,9 +148,9 @@ public class OrangePi {
 			}
 			
 			if (isValid) {
-				nodeId = values[0] + " " + values[1] + " " + values[2]  + " " + (values[3].equals("0") ? "" : values[3]);
-				if (values.length == 5) {
-					nodeDisplayName = values[4];
+				nodeId = listValues[0] + " " + listValues[1] + " " + listValues[2]  + " " + (listValues[3].equals("0") ? "" : listValues[3]);
+				if (listValues.length == 5) {
+					nodeDisplayName = listValues[4];
 				} else {
 					nodeDisplayName = "";
 				}
@@ -411,11 +412,11 @@ public class OrangePi {
 		sendUdpPacket(buffer);
 	}
 			
-	private Boolean isMapTypeValues(String type) {
-		for (int i = 0; i < NODEVALUES.length; i++) {
-			if (type.equals(NODEVALUES[i])) {
-				nodeType = NODE_TXT[i];
-				if ((i == 0) || (i == 1) || (i == 7) || (i == 8)) {
+	private Boolean isValidNode(String nodeName) {
+		for (int i = 0; i < NODE_NAMES.length; i++) {
+			if (nodeName.equals(NODE_NAMES[i])) {
+				nodeTxt = NODE_TXT[i];
+				if ((i == 0) || (i == 1) || (i == 6) || (i == 8) || (i == 9) || (i == 10) || (i == 12)) {
 					nodeDisplay = DISPLAY_TXT;
 				}
 				return true;
@@ -539,10 +540,10 @@ public class OrangePi {
 	}
 
 	public String getNodeType() {
-		if (nodeType.trim().length() == 0) {
+		if (nodeTxt.trim().length() == 0) {
 			return null;
 		}
-		return nodeType;
+		return nodeTxt;
 	}
 
 	public String getNodeOutput() {

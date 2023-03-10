@@ -76,7 +76,11 @@ public class WizardE131Txt extends JDialog {
 	private JLabel lblUniverse;
 	private JLabel lblDirection;
 	private JLabel lblMerge;
-	//
+	
+	private boolean hasUniverseA = false;
+	private boolean hasUniverseB = false;
+	private boolean hasUniverseC = false;
+	private boolean hasUniverseD = false;
 
 	public static void main(String[] args) {
 		try {
@@ -443,18 +447,22 @@ public class WizardE131Txt extends JDialog {
 					//
 					if (line.contains("universe_port_a")) {
 						formattedTextFieldPortA.setValue(Properties.getInt(line));
+						hasUniverseA = true;
 						continue;
 					}
 					if (line.contains("universe_port_b")) {
 						formattedTextFieldPortB.setValue(Properties.getInt(line));
+						hasUniverseB = true;
 						continue;
 					}
 					if (line.contains("universe_port_c")) {
 						formattedTextFieldPortC.setValue(Properties.getInt(line));
+						hasUniverseC = true;
 						continue;
 					}
 					if (line.contains("universe_port_d")) {
 						formattedTextFieldPortD.setValue(Properties.getInt(line));
+						hasUniverseD = true;
 						continue;
 					}
 					//
@@ -492,6 +500,34 @@ public class WizardE131Txt extends JDialog {
 						continue;
 					}
 				}
+			}
+			
+			if (!hasUniverseA) {
+				formattedTextFieldPortA.setEnabled(false);
+				comboBoxDirectionPortA.setEnabled(false);
+				comboBoxMergePortA.setEnabled(false);
+				formattedTextFieldPriorityPortA.setEnabled(false);
+			}
+
+			if (!hasUniverseB) {
+				formattedTextFieldPortB.setEnabled(false);
+				comboBoxDirectionPortB.setEnabled(false);
+				comboBoxMergePortB.setEnabled(false);
+				formattedTextFieldPriorityPortB.setEnabled(false);
+			}
+
+			if (!hasUniverseC) {
+				formattedTextFieldPortC.setEnabled(false);
+				comboBoxDirectionPortC.setEnabled(false);
+				comboBoxMergePortC.setEnabled(false);
+				formattedTextFieldPriorityPortC.setEnabled(false);
+			}
+
+			if (!hasUniverseD) {
+				formattedTextFieldPortD.setEnabled(false);
+				comboBoxDirectionPortD.setEnabled(false);
+				comboBoxMergePortD.setEnabled(false);
+				formattedTextFieldPriorityPortD.setEnabled(false);
 			}
 		}
 	}

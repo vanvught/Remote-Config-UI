@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -125,6 +125,12 @@ public class WizardArtnetTxt extends JDialog {
 	private JTextField textFieldShortName;
 	private JTextField textFieldLongName;
 	private JComboBox<String> comboBoxFailsafe;
+	
+	private boolean hasRDM = false;
+	private boolean hasUniverseA = false;
+	private boolean hasUniverseB = false;
+	private boolean hasUniverseC = false;
+	private boolean hasUniverseD = false;
 	
 	public static void main(String[] args) {
 		try {
@@ -660,6 +666,7 @@ public class WizardArtnetTxt extends JDialog {
 					//
 					if (line.contains("enable_rdm")) {
 						chckbxEnableRDM.setSelected(Properties.getBool(line));
+						hasRDM = true;
 						continue;
 					}
 					//
@@ -717,21 +724,25 @@ public class WizardArtnetTxt extends JDialog {
 					if (line.contains("universe_port_a")) {
 						artnetAdressPortA = Properties.getInt(line);
 						formattedTextFieldUniverseA.setValue(getUniverseFromAddress(artnetAdressPortA));
+						hasUniverseA = true;
 						continue;
 					}
 					if (line.contains("universe_port_b")) {
 						artnetAdressPortB = Properties.getInt(line);
 						formattedTextFieldUniverseB.setValue(getUniverseFromAddress(artnetAdressPortB));
+						hasUniverseB = true;
 						continue;
 					}
 					if (line.contains("universe_port_c")) {
 						artnetAdressPortC = Properties.getInt(line);
 						formattedTextFieldUniverseC.setValue(getUniverseFromAddress(artnetAdressPortC));
+						hasUniverseC = true;
 						continue;
 					}
 					if (line.contains("universe_port_d")) {
 						artnetAdressPortD = Properties.getInt(line);
 						formattedTextFieldUniverseD.setValue(getUniverseFromAddress(artnetAdressPortD));
+						hasUniverseD = true;
 						continue;
 					}
 					//
@@ -833,6 +844,49 @@ public class WizardArtnetTxt extends JDialog {
 					}
 				}
 			}
+			
+			handleComboBoxDirectionPort(comboBoxDirectionPortA, comboBoxMergePortA, comboBoxProtocolPortA,
+					formattedIP1PortA, formattedIP2PortA, formattedIP3PortA, formattedIP4PortA, chckbxRdmEnablePortA);
+			handleComboBoxDirectionPort(comboBoxDirectionPortB, comboBoxMergePortB, comboBoxProtocolPortB,
+					formattedIP1PortB, formattedIP2PortB, formattedIP3PortB, formattedIP4PortB, chckbxRdmEnablePortB);
+			handleComboBoxDirectionPort(comboBoxDirectionPortC, comboBoxMergePortC, comboBoxProtocolPortC,
+					formattedIP1PortC, formattedIP2PortC, formattedIP3PortC, formattedIP4PortC, chckbxRdmEnablePortC);
+			handleComboBoxDirectionPort(comboBoxDirectionPortD, comboBoxMergePortD, comboBoxProtocolPortD,
+					formattedIP1PortD, formattedIP2PortD, formattedIP3PortD, formattedIP4PortD, chckbxRdmEnablePortD);
+
+			if (!hasUniverseA) {
+				formattedTextFieldUniverseA.setEnabled(false);
+				comboBoxMergePortA.setEnabled(false);
+				comboBoxProtocolPortA.setEnabled(false);
+				comboBoxDirectionPortA.setEnabled(false);
+			}
+
+			if (!hasUniverseB) {
+				formattedTextFieldUniverseB.setEnabled(false);
+				comboBoxMergePortB.setEnabled(false);
+				comboBoxProtocolPortB.setEnabled(false);
+				comboBoxDirectionPortB.setEnabled(false);
+			}
+
+			if (!hasUniverseC) {
+				formattedTextFieldUniverseC.setEnabled(false);
+				comboBoxMergePortC.setEnabled(false);
+				comboBoxProtocolPortC.setEnabled(false);
+				comboBoxDirectionPortC.setEnabled(false);
+			}
+
+			if (!hasUniverseD) {
+				formattedTextFieldUniverseD.setEnabled(false);
+				comboBoxMergePortD.setEnabled(false);
+				comboBoxProtocolPortD.setEnabled(false);
+				comboBoxDirectionPortD.setEnabled(false);
+			}
+
+			chckbxEnableRDM.setEnabled(hasRDM);
+			chckbxRdmEnablePortA.setEnabled(hasRDM);
+			chckbxRdmEnablePortB.setEnabled(hasRDM);
+			chckbxRdmEnablePortC.setEnabled(hasRDM);
+			chckbxRdmEnablePortD.setEnabled(hasRDM);
 		}
 	}
 	
@@ -936,10 +990,18 @@ public class WizardArtnetTxt extends JDialog {
 			txtAppend.append(String.format("net=%d\n", artnetNet));
 			txtAppend.append(String.format("subnet=%d\n", artnetSubnet));
 			
-			txtAppend.append(String.format("direction_port_a=%s\n", getDirection(comboBoxDirectionPortA)));
-			txtAppend.append(String.format("direction_port_b=%s\n", getDirection(comboBoxDirectionPortB)));
-			txtAppend.append(String.format("direction_port_c=%s\n", getDirection(comboBoxDirectionPortC)));
-			txtAppend.append(String.format("direction_port_d=%s\n", getDirection(comboBoxDirectionPortD)));
+			if (comboBoxDirectionPortA.isEnabled()) {
+				txtAppend.append(String.format("direction_port_a=%s\n", getDirection(comboBoxDirectionPortA)));
+			}
+			if (comboBoxDirectionPortB.isEnabled()) {
+				txtAppend.append(String.format("direction_port_b=%s\n", getDirection(comboBoxDirectionPortB)));
+			}
+			if (comboBoxDirectionPortC.isEnabled()) {
+				txtAppend.append(String.format("direction_port_c=%s\n", getDirection(comboBoxDirectionPortC)));
+			}
+			if (comboBoxDirectionPortD.isEnabled()) {
+				txtAppend.append(String.format("direction_port_d=%s\n", getDirection(comboBoxDirectionPortD)));
+			}
 			
 			txtAppend.append(String.format("universe_port_a=%s\n", artnetAdressPortA));
 			txtAppend.append(String.format("universe_port_b=%s\n", artnetAdressPortB));
@@ -956,20 +1018,28 @@ public class WizardArtnetTxt extends JDialog {
 			txtAppend.append(String.format("merge_mode_port_b=%s\n", getMergeMode(comboBoxMergePortB)));
 			txtAppend.append(String.format("merge_mode_port_c=%s\n", getMergeMode(comboBoxMergePortC)));
 			txtAppend.append(String.format("merge_mode_port_d=%s\n", getMergeMode(comboBoxMergePortD)));
-			
-			txtAppend.append(String.format("enable_rdm=%d\n", chckbxEnableRDM.isSelected() ? 1 : 0));
+			// RDM
+			if (hasRDM) {
+				txtAppend.append(String.format("enable_rdm=%d\n", chckbxEnableRDM.isSelected() ? 1 : 0));
 
-			txtAppend.append(String.format("rdm_enable_port_a=%s\n", chckbxRdmEnablePortA.isSelected() ? 1 : 0));
-			txtAppend.append(String.format("rdm_enable_port_b=%s\n", chckbxRdmEnablePortB.isSelected() ? 1 : 0));
-			txtAppend.append(String.format("rdm_enable_port_c=%s\n", chckbxRdmEnablePortC.isSelected() ? 1 : 0));
-			txtAppend.append(String.format("rdm_enable_port_d=%s\n", chckbxRdmEnablePortD.isSelected() ? 1 : 0));
-				
+				txtAppend.append(String.format("rdm_enable_port_a=%s\n", chckbxRdmEnablePortA.isSelected() ? 1 : 0));
+				txtAppend.append(String.format("rdm_enable_port_b=%s\n", chckbxRdmEnablePortB.isSelected() ? 1 : 0));
+				txtAppend.append(String.format("rdm_enable_port_c=%s\n", chckbxRdmEnablePortC.isSelected() ? 1 : 0));
+				txtAppend.append(String.format("rdm_enable_port_d=%s\n", chckbxRdmEnablePortD.isSelected() ? 1 : 0));
+			}	
 			// Input
-			txtAppend.append(String.format("%sdestination_ip_port_a=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortA), formattedIP1PortA.getValue(),formattedIP2PortA.getValue(),formattedIP3PortA.getValue(),formattedIP4PortA.getValue()));
-			txtAppend.append(String.format("%sdestination_ip_port_b=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortB), formattedIP1PortB.getValue(),formattedIP2PortB.getValue(),formattedIP3PortB.getValue(),formattedIP4PortB.getValue()));
-			txtAppend.append(String.format("%sdestination_ip_port_c=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortC), formattedIP1PortC.getValue(),formattedIP2PortC.getValue(),formattedIP3PortC.getValue(),formattedIP4PortC.getValue()));
-			txtAppend.append(String.format("%sdestination_ip_port_d=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortD), formattedIP1PortD.getValue(),formattedIP2PortD.getValue(),formattedIP3PortD.getValue(),formattedIP4PortD.getValue()));
-			
+			if (formattedIP1PortA.isEnabled()) {
+				txtAppend.append(String.format("%sdestination_ip_port_a=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortA), formattedIP1PortA.getValue(),formattedIP2PortA.getValue(),formattedIP3PortA.getValue(),formattedIP4PortA.getValue()));
+			}
+			if (formattedIP1PortB.isEnabled()) {
+				txtAppend.append(String.format("%sdestination_ip_port_b=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortB), formattedIP1PortB.getValue(),formattedIP2PortB.getValue(),formattedIP3PortB.getValue(),formattedIP4PortB.getValue()));
+			}
+			if (formattedIP1PortC.isEnabled()) {
+				txtAppend.append(String.format("%sdestination_ip_port_c=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortC), formattedIP1PortC.getValue(),formattedIP2PortC.getValue(),formattedIP3PortC.getValue(),formattedIP4PortC.getValue()));
+			}
+			if (formattedIP1PortD.isEnabled()) {
+				txtAppend.append(String.format("%sdestination_ip_port_d=%d.%d.%d.%d\n", getComment(comboBoxDirectionPortD), formattedIP1PortD.getValue(),formattedIP2PortD.getValue(),formattedIP3PortD.getValue(),formattedIP4PortD.getValue()));
+			}
 			//
 			txtAppend.append(String.format("map_universe0=%d\n", chckbxMapUniverse0.isSelected() ? 1 : 0));
 			

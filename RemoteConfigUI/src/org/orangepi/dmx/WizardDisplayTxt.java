@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ public class WizardDisplayTxt extends JDialog {
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
 	//
-	final static String propertieKeys[] = { "#", "title", "board_name", "ip_address", "version", "universe", "active_ports",
+	final static String propertieKeys[] = { "#", "title", "board_name", "ip_address", "version", "active_ports",
 			"short_name", "hostname", "universe_port_a", "universe_port_b", "universe_port_c", "universe_port_d",
 			"net_mask", "dmx_start_address", "destination_ip_port_a", "destination_ip_port_b", "destination_ip_port_c",
 			"destination_ip_port_d", "default_gateway", "dmx_direction" };
