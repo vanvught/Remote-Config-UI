@@ -117,7 +117,7 @@ public class RemoteConfig extends JFrame {
 	private OrangePi opi = null;
 	private JMenuItem mntmFactoryDefaults;
 	private JMenuItem mntmDmxTransmit;
-
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -210,7 +210,7 @@ public class RemoteConfig extends JFrame {
 						}
 					} else {
 						lblNodeId.setText(opi.getNodeId());
-						lblDisplayName.setText(opi.getNodeDisplayName());
+						lblDisplayName.setText(opi.getDisplayName());
 						
 						String s = path.getLastPathComponent().toString();
 						String text = opi.getTxt(s);
@@ -1008,24 +1008,30 @@ public class RemoteConfig extends JFrame {
 
 				String output = String.format("uptime %d day%s, %02d:%02d:%02d", days, days == 1 ? "" : "s", hours, minutes, seconds);
 
-				JOptionPane.showMessageDialog(null, opi.getNodeDisplayName() + "\n" + opi.getNodeId() + "\n\n" + output);
+				JOptionPane.showMessageDialog(null, opi.getDisplayName() + "\n" + opi.getNodeId() + "\n\n" + output);
 
 			} catch (Exception e) {
 				System.out.println(e);
-				JOptionPane.showMessageDialog(null, opi.getNodeDisplayName() + "\n" + opi.getNodeId() + "\n\n" + opi.doUptime());
+				JOptionPane.showMessageDialog(null, opi.getDisplayName() + "\n" + opi.getNodeId() + "\n\n" + opi.doUptime());
 			}
 		}
 	}
 
 	private void doVersion(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
-			JOptionPane.showMessageDialog(null, opi.getNodeDisplayName() + "\n" + opi.getNodeId() + "\n\n" + opi.doVersion());
+			JOptionPane.showMessageDialog(null, opi.getDisplayName() + "\n" + opi.getNodeId() + "\n\n" + opi.doVersion());
 		}
 	}
 
 	private void doSave(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
-			int n = JOptionPane.showConfirmDialog(null,
+			if (textArea.getText().trim().length() == 0) {
+				return;
+			}
+			if (textArea.getText().indexOf('\n') == -1) {
+				textArea.append("\n");
+			}
+			final int n = JOptionPane.showConfirmDialog(null,
 					"Save " + textArea.getText().trim().substring(1, textArea.getText().indexOf('\n')) + " ?",
 					lblDisplayName.getText(), JOptionPane.OK_CANCEL_OPTION);
 			if (n == JOptionPane.OK_OPTION) {
@@ -1110,40 +1116,53 @@ public class RemoteConfig extends JFrame {
 			for (Map.Entry<Integer, OrangePi> entry : entries) {
 
 				child = new DefaultMutableTreeNode(entry.getValue());
-				child.add(new DefaultMutableTreeNode(((OrangePi) child.getUserObject()).getNodeRemoteConfig()));
+				child.add(new DefaultMutableTreeNode(((OrangePi) child.getUserObject()).getRemoteConfig()));
 
-				String nodeDisplay = ((OrangePi) child.getUserObject()).getNodeDisplay();
+				String nodeDisplay = ((OrangePi) child.getUserObject()).getDisplay();
 
 				if (nodeDisplay != null) {
 					child.add(new DefaultMutableTreeNode(nodeDisplay));
 				}
 
-				child.add(new DefaultMutableTreeNode(((OrangePi) child.getUserObject()).getNodeNetwork()));
+				child.add(new DefaultMutableTreeNode(((OrangePi) child.getUserObject()).getNetwork()));
 
 				String nodeType = ((OrangePi) child.getUserObject()).getNodeType();
 
 				if (nodeType != null) {
 					System.out.println("nodeType=" + nodeType);
-					if (nodeType.equals("node.txt")) {						
+					if (nodeType.equals("node.txt")) {
 						DefaultMutableTreeNode nodePersonality = new DefaultMutableTreeNode(new DefaultMutableTreeNode(nodeType));
-					
+
 						nodePersonality.add(new DefaultMutableTreeNode("artnet.txt"));
-						
 						nodePersonality.add(new DefaultMutableTreeNode("e131.txt"));
-						
+
 						child.add(nodePersonality);
+					} else if (nodeType.equals("rdm_device.txt")) {
+						DefaultMutableTreeNode nodeRdmResponder = new DefaultMutableTreeNode("RDM Responder");
+						
+						nodeRdmResponder.add(new DefaultMutableTreeNode("rdm_device.txt"));
+						nodeRdmResponder.add(new DefaultMutableTreeNode("sensors.txt"));
+						nodeRdmResponder.add(new DefaultMutableTreeNode("subdev.txt"));
+						
+						child.add(nodeRdmResponder);
 					} else {
 						child.add(new DefaultMutableTreeNode(nodeType));
+						
+						String nodeRdm = ((OrangePi) child.getUserObject()).getRdmDevice();
+
+						if (nodeRdm != null) {
+							DefaultMutableTreeNode nodeRdmResponder = new DefaultMutableTreeNode("RDM Responder");
+							
+							nodeRdmResponder.add(new DefaultMutableTreeNode("rdm_device.txt"));
+							nodeRdmResponder.add(new DefaultMutableTreeNode("sensors.txt"));
+							nodeRdmResponder.add(new DefaultMutableTreeNode("subdev.txt"));
+							
+							child.add(nodeRdmResponder);
+						}
 					}
 				}
 
-				String nodeRdm = ((OrangePi) child.getUserObject()).getNodeRDM();
-
-				if (nodeRdm != null) {
-					child.add(new DefaultMutableTreeNode(nodeRdm));
-				}
-
-				String nodeLtcDisplay = ((OrangePi) child.getUserObject()).getNodeLtcDisplay();
+				String nodeLtcDisplay = ((OrangePi) child.getUserObject()).getLtcDisplay();
 
 				if (nodeLtcDisplay != null) {
 					child.add(new DefaultMutableTreeNode(nodeLtcDisplay));
@@ -1155,33 +1174,36 @@ public class RemoteConfig extends JFrame {
 					child.add(new DefaultMutableTreeNode(nodeMode));
 				}
 
-				String nodeTCNet = ((OrangePi) child.getUserObject()).getNodeTCNet();
+				String nodeTCNet = ((OrangePi) child.getUserObject()).getTCNet();
 
 				if (nodeTCNet != null) {
 					child.add(new DefaultMutableTreeNode(nodeTCNet));
 				}
 
-				String nodeSparkFun = ((OrangePi) child.getUserObject()).getNodeSparkFun();
+				String nodeSparkFun = ((OrangePi) child.getUserObject()).getSparkFun();
 
 				if (nodeSparkFun != null) {
-					child.add(new DefaultMutableTreeNode(nodeSparkFun));
+					DefaultMutableTreeNode nodeStepper = new DefaultMutableTreeNode("SparkFun");
+					nodeStepper.add(new DefaultMutableTreeNode(nodeSparkFun));		
+					
+					int nMotorIndex = 0;
+					String nodeMotor = null;
+
+					while ((nodeMotor = ((OrangePi) child.getUserObject()).getMotor(nMotorIndex)) != null) {
+						nodeStepper.add(new DefaultMutableTreeNode(nodeMotor));
+						nMotorIndex++;
+					}
+					
+					child.add(nodeStepper);
 				}
 
-				int nMotorIndex = 0;
-				String nodeMotor = null;
-
-				while ((nodeMotor = ((OrangePi) child.getUserObject()).getNodeMotor(nMotorIndex)) != null) {
-					child.add(new DefaultMutableTreeNode(nodeMotor));
-					nMotorIndex++;
-				}
-
-				String nodeGPS = ((OrangePi) child.getUserObject()).getNodeGPS();
+				String nodeGPS = ((OrangePi) child.getUserObject()).getGPS();
 
 				if (nodeGPS != null) {
 					child.add(new DefaultMutableTreeNode(nodeGPS));
 				}
 				
-				String nodeETC = ((OrangePi) child.getUserObject()).getNodeETC();
+				String nodeETC = ((OrangePi) child.getUserObject()).getETC();
 
 				if (nodeETC != null) {
 					child.add(new DefaultMutableTreeNode(nodeETC));

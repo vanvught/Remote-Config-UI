@@ -42,7 +42,9 @@ public class OrangePi {
 	private static final String GPS_TXT = "gps.txt";
 	private static final String ETC_TXT = "etc.txt";
 	private static final String MOTORS_TXT[] = {"motor0.txt", "motor1.txt", "motor2.txt", "motor3.txt", "motor4.txt", "motor5.txt", "motor6.txt", "motor7.txt" }; 
-	private static final String RDM_TXT = "rdm_device.txt";
+	private static final String RDM_DEVICE_TXT = "rdm_device.txt";
+	private static final String SENSORS_TXT = "sensors.txt";
+	private static final String SUBDEV_TXT = "subdev.txt";
 	private static final String SPARKFUN_TXT = "sparkfun.txt";
 	
 	private static final String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
@@ -56,27 +58,31 @@ public class OrangePi {
 	private String nodeId = "";
 	private String nodeDisplayName = "";
 	
-	private String nodeRemoteConfig = null;
-	private String nodeDisplay = null;
-	private String nodeNetwork = null;
-	private String nodeTxt = null;
-	private String nodeOutput = null;
-	private String nodeLtcDisplay = null;
-	private String nodeTCNet = null;
-	private String nodeGPS = null;
-	private String nodeETC = null;
-	private String nodeMotors[] = {null, null, null, null, null, null, null, null};
-	private String nodeRDM = null;
-	private String nodeSparkFun = null;
-	private String nodeShow = null;
-	
+	private String txtRemoteConfig = null;
+	private String txtDisplay = null;
+	private String txtNetwork = null;
+	private String txtNode = null;
+	private String txtOutput = null;
+	private String txtLtcDisplay = null;
+	private String txtTCNet = null;
+	private String txtGPS = null;
+	private String txtETC = null;
+	private String txtShow = null;
+	private String txtSparkFun = null;
+	private String txtMotors[] = {null, null, null, null, null, null, null, null};
+	private String txtRDM_DEVICE = null;
+	private String txtSENSORS = null;
+	private String txtSUBDEV = null;
+
 	private String sbLtcDisplay = null;
 	private String sbTCNet = null;
 	private String sbGPS = null;
 	private String sbETC = null;
-	private String sbMotors[] = {null, null, null, null, null, null, null, null};
-	private String sbRDM = null;
 	private String sbSparkFun = null;
+	private String sbMotors[] = {null, null, null, null, null, null, null, null};
+	private String sbRDM_DEVICE = null;
+	private String sbSENSORS = null;
+	private String sbSUBDEV = null;
 	
 	public OrangePi(String arg, DatagramSocket socketReceive) {
 		super();
@@ -95,34 +101,34 @@ public class OrangePi {
 				String[] outputName = listValues[2].split("\n");
 				
 				if (outputName[0].equals("DMX") || outputName[0].equals("RDM")) {
-					nodeOutput = OUTPUT_TXT[0];
-				} else if ((outputName[0].equals("Pixel")) && (!nodeTxt.contains("ddp"))){
-					nodeOutput = OUTPUT_TXT[1];
+					txtOutput = OUTPUT_TXT[0];
+				} else if ((outputName[0].equals("Pixel")) && (!txtNode.contains("ddp"))){
+					txtOutput = OUTPUT_TXT[1];
 				} else if (outputName[0].equals("Monitor")) {
-					nodeOutput = OUTPUT_TXT[2];
+					txtOutput = OUTPUT_TXT[2];
 				} else if (outputName[0].equals("TimeCode")) {
-					nodeLtcDisplay = LDISPLAY_TXT;
-					nodeTCNet = TCNET_TXT;
-					nodeGPS = GPS_TXT;
-					nodeETC = ETC_TXT;
+					txtLtcDisplay = LDISPLAY_TXT;
+					txtTCNet = TCNET_TXT;
+					txtGPS = GPS_TXT;
+					txtETC = ETC_TXT;
 				} else if (outputName[0].equals("OSC")) {
 				} else if (outputName[0].equals("Config")) {
 					//
 				} else if (outputName[0].equals("Stepper")) {
-					nodeOutput = OUTPUT_TXT[1];
-					nodeSparkFun = SPARKFUN_TXT;
-					for (int i = 0; i < nodeMotors.length; i++) {
-						nodeMotors[i] = MOTORS_TXT[i];
+					txtOutput = OUTPUT_TXT[1];
+					txtSparkFun = SPARKFUN_TXT;
+					for (int i = 0; i < txtMotors.length; i++) {
+						txtMotors[i] = MOTORS_TXT[i];
 					}
-					nodeRDM = RDM_TXT;
+					txtRDM_DEVICE = RDM_DEVICE_TXT;
 				} else if (outputName[0].equals("Player")) {
 					// 
 				} else if (outputName[0].equals("Art-Net")) {
 					//
 				} else if (outputName[0].equals("Serial")) {
-					nodeOutput = OUTPUT_TXT[4];
+					txtOutput = OUTPUT_TXT[4];
 				} else if (outputName[0].equals("RGB Panel")) {
-					nodeOutput = OUTPUT_TXT[5];	
+					txtOutput = OUTPUT_TXT[5];	
 				} else if (outputName[0].equals("Pixel")) {
 					//
 				} else {
@@ -131,9 +137,11 @@ public class OrangePi {
 			}
 			
 			if (isValid) {
-				nodeRemoteConfig = RCONFIG_TXT;
-				nodeNetwork = NETWORK_TXT;
-
+				if (!listValues[1].toLowerCase().contains("bootloader")) {
+					txtRemoteConfig = RCONFIG_TXT;
+					txtNetwork = NETWORK_TXT;
+				}
+					
 				if (listValues[0].matches(ipv4Pattern)) {
 					try {
 						System.out.println("=> " + listValues[0]);
@@ -199,17 +207,27 @@ public class OrangePi {
 				sbMotors[nIndex] = doGet(txt);
 			}
 			return sbMotors[nIndex].toString();
-		} else if (isRdmTxt(txt)) {
-			if (sbRDM == null) {
-				sbRDM = doGet(txt);
-			}
-			return sbRDM.toString();
 		} else if (isSparkFunTxt(txt)) {
 			if (sbSparkFun == null) {
 				sbSparkFun = doGet(txt);
 			}
 			return sbSparkFun.toString();
-		}
+		} else if (isRdmDeviceTxt(txt)) {
+			if (sbRDM_DEVICE == null) {
+				sbRDM_DEVICE = doGet(txt);
+			}
+			return sbRDM_DEVICE.toString();
+		} else if (isRdmSensorsTxt(txt)) {
+			if (sbSENSORS == null) {
+				sbSENSORS = doGet(txt);
+			}
+			return sbSENSORS.toString();
+		} else if (isRdmSubdevTxt(txt)) {
+			if (sbSUBDEV == null) {
+				sbSUBDEV = doGet(txt);
+			}
+			return sbSUBDEV.toString();
+		} 
 
 		return null;
 	}
@@ -250,6 +268,9 @@ public class OrangePi {
 				socketUDP.receive(packetReceive);
 				final String received = new String(packetReceive.getData()).trim();
 				System.out.println("Message received [" + received + "]");
+				if (received.toLowerCase().contains("error")) {
+					return "Not implemented.";
+				}
 				return received;
 			}
 		} catch (SocketTimeoutException e) {
@@ -298,21 +319,27 @@ public class OrangePi {
 			bDoSave = true;
 		} else if (isGPSTxt(txt)) {
 			sbGPS = null;
-			bDoSave = true;	
+			bDoSave = true;
 		} else if (isETCTxt(txt)) {
 			sbETC = null;
-			bDoSave = true;	
+			bDoSave = true;
 		} else if (isMotorTxt(txt)) {
 			int nMotorIndex = txt.charAt(5) - '0';
 			sbMotors[nMotorIndex] = null;
 			bDoSave = true;
-		} else if (isRdmTxt(txt)) {
-			sbRDM = null;
-			bDoSave = true;
 		} else if (isSparkFunTxt(txt)) {
 			sbSparkFun = null;
 			bDoSave = true;
-		} 
+		} else if (isRdmDeviceTxt(txt)) {
+			sbRDM_DEVICE = null;
+			bDoSave = true;
+		} else if (isRdmSensorsTxt(txt)) {
+			sbSENSORS = null;
+			bDoSave = true;
+		} else if (isRdmSubdevTxt(txt)) {
+			sbSUBDEV = null;
+			bDoSave = true;
+		}
 		
 		if (bDoSave) {
 			byte[] buffer = data.trim().getBytes();
@@ -415,9 +442,13 @@ public class OrangePi {
 	private Boolean isValidNode(String nodeName) {
 		for (int i = 0; i < NODE_NAMES.length; i++) {
 			if (nodeName.equals(NODE_NAMES[i])) {
-				nodeTxt = NODE_TXT[i];
+				txtNode = NODE_TXT[i];
 				if ((i == 0) || (i == 1) || (i == 6) || (i == 8) || (i == 9) || (i == 10) || (i == 12)) {
-					nodeDisplay = DISPLAY_TXT;
+					txtDisplay = DISPLAY_TXT;
+				}
+				if (i == 12) {
+					txtSENSORS = SENSORS_TXT;
+					txtSUBDEV = SUBDEV_TXT;
 				}
 				return true;
 			}
@@ -492,27 +523,41 @@ public class OrangePi {
 		return false;
 	}
 	
-	private Boolean isMotorTxt(String motor) {
+	private Boolean isSparkFunTxt(String s) {
+		if (s.equals(SPARKFUN_TXT)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private Boolean isMotorTxt(String s) {
 		for (int i = 0; i < MOTORS_TXT.length; i++) {
-			if (motor.equals(MOTORS_TXT[i])) {
+			if (s.equals(MOTORS_TXT[i])) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private Boolean isRdmTxt(String rdm) {
-		if (rdm.equals(RDM_TXT)) {
+	private Boolean isRdmDeviceTxt(String s) {
+		if (s.equals(RDM_DEVICE_TXT)) {
 			return true;
 		}
 		return false;
 	}
 	
-	private Boolean isSparkFunTxt(String sparkFun) {
-		if (sparkFun.equals(SPARKFUN_TXT)) {
+	private Boolean isRdmSensorsTxt(String s) {
+		if (s.equals(SENSORS_TXT)) {
 			return true;
 		}
-		return false;
+		return false;		
+	}
+
+	private Boolean isRdmSubdevTxt(String s) {
+		if (s.equals(SUBDEV_TXT)) {
+			return true;
+		}
+		return false;		
 	}
 	
 	public Boolean getIsValid() {
@@ -523,66 +568,74 @@ public class OrangePi {
 		return nodeId;
 	}
 	
-	public String getNodeDisplayName() {
-		return nodeDisplayName;
-	}
-	
-	public String getNodeRemoteConfig() {
-		return nodeRemoteConfig;
-	}
-	
-	public String getNodeDisplay() {
-		return nodeDisplay;
-	}
-		
-	public String getNodeNetwork() {
-		return nodeNetwork;
-	}
-
 	public String getNodeType() {
-		if (nodeTxt.trim().length() == 0) {
+		if (txtNode.trim().length() == 0) {
 			return null;
 		}
-		return nodeTxt;
+		return txtNode;
 	}
 
 	public String getNodeOutput() {
-		return nodeOutput;
+		return txtOutput;
 	}
 	
-	public String getNodeLtcDisplay() {
-		return nodeLtcDisplay;
+	public String getDisplayName() {
+		return nodeDisplayName;
 	}
 	
-	public String getNodeTCNet() {
-		return nodeTCNet;
+	public String getRemoteConfig() {
+		return txtRemoteConfig;
 	}
 	
-	public String getNodeGPS() {
-		return nodeGPS;
+	public String getDisplay() {
+		return txtDisplay;
+	}
+		
+	public String getNetwork() {
+		return txtNetwork;
 	}
 	
-	public String getNodeETC() {
-		return nodeETC;
+	public String getLtcDisplay() {
+		return txtLtcDisplay;
 	}
 	
-	public String getNodeMotor(int MotorIndex) {
-		if (MotorIndex >= nodeMotors.length) {
+	public String getTCNet() {
+		return txtTCNet;
+	}
+	
+	public String getGPS() {
+		return txtGPS;
+	}
+	
+	public String getETC() {
+		return txtETC;
+	}
+	
+	public String getSparkFun() {
+		return txtSparkFun;
+	}
+	
+	public String getMotor(int MotorIndex) {
+		if (MotorIndex >= txtMotors.length) {
 			return null;
 		}
-		return nodeMotors[MotorIndex];
+		return txtMotors[MotorIndex];
 	}
 	
-	public String getNodeRDM() {
-		return nodeRDM;
+	public String getRdmDevice() {
+		return txtRDM_DEVICE;
 	}
 	
-	public String getNodeSparkFun() {
-		return nodeSparkFun;
+	public String getRdmSensors() {
+		return txtSENSORS;
 	}
-
+	
+	public String getRdmSubDev() {
+		return txtSUBDEV;
+	}
+	
 	public String getNodeShow() {
-		return nodeShow;
+		return txtShow;
 	}
 	
 	public InetAddress getAddress() {
