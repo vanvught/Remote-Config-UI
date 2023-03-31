@@ -36,6 +36,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -61,10 +62,10 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.border.EtchedBorder;
 
 public class RemoteConfig extends JFrame {
 	private static final long serialVersionUID = 8836780363465781413L;
@@ -73,7 +74,7 @@ public class RemoteConfig extends JFrame {
 	//
 	private final int BUFFERSIZE = 1024;
 	private final int PORT = 0x2905;
-	private DatagramSocket socketReceive = null;
+	private DatagramSocket socket = null;
 
 	private JPanel contentPane;
 	private JMenuItem mntmExit;
@@ -117,11 +118,18 @@ public class RemoteConfig extends JFrame {
 	private OrangePi opi = null;
 	private JMenuItem mntmFactoryDefaults;
 	private JMenuItem mntmDmxTransmit;
+	private JMenu mnNetwork;
+	private JMenuItem mntmSelectInterface;
+	
+	private static InterfaceAddress interfaceAddress;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					NetworkInterfaces networkInterfaces = new NetworkInterfaces();
+					RemoteConfig.interfaceAddress = networkInterfaces.getInterfaceAddress();
+					
 					RemoteConfig frame = new RemoteConfig();
 					frame.setVisible(true);
 					frame.constructTree();
@@ -135,11 +143,11 @@ public class RemoteConfig extends JFrame {
 	public RemoteConfig() {
 		System.out.println(System.getProperty("os.name"));
 		
-		setTitle("Remote Configuration Manager");
+		setTitle(interfaceAddress.getAddress());
 
-		createReceiveSocket();
+		createSocket();
 
-		InitComponents();
+		initComponents();
 		CreateEvents();
 	}
 
@@ -174,6 +182,12 @@ public class RemoteConfig extends JFrame {
 					tree.collapseRow(row);
 					row--;
 				}
+			}
+		});
+		
+		mntmSelectInterface.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doInterfaces();
 			}
 		});
 
@@ -623,7 +637,7 @@ public class RemoteConfig extends JFrame {
 		});
 	}
 
-	private void InitComponents() {
+	private void initComponents() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 459, 337);
 
@@ -739,6 +753,7 @@ public class RemoteConfig extends JFrame {
 		menuBar.add(mnWorkflow);
 
 		mntmFirmwareInstallation = new JMenuItem("Firmware installation");
+		mntmFirmwareInstallation.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.ALT_DOWN_MASK));
 		mnWorkflow.add(mntmFirmwareInstallation);
 
 		mnBackup = new JMenu("Backup");
@@ -752,6 +767,13 @@ public class RemoteConfig extends JFrame {
 
 		mntmRestore = new JMenuItem("Restore");
 		mnWorkflow.add(mntmRestore);
+		
+		mnNetwork = new JMenu("Network");
+		menuBar.add(mnNetwork);
+		
+		mntmSelectInterface = new JMenuItem("Select interface");
+		mntmSelectInterface.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK));
+		mnNetwork.add(mntmSelectInterface);
 
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -821,6 +843,12 @@ public class RemoteConfig extends JFrame {
 	private void doExit() {
 		System.exit(0);
 	}
+	
+	private void doInterfaces() {
+		NetworkInterfaces networkInterfaces;
+		networkInterfaces = new NetworkInterfaces(this);
+		networkInterfaces.Show();
+	}
 
 	private void doReboot(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
@@ -885,7 +913,7 @@ public class RemoteConfig extends JFrame {
 	}
 
 	private void doBroadcastSelect() {
-		BroadcastSelect broadcastSelect = new BroadcastSelect(this, socketReceive);
+		BroadcastSelect broadcastSelect = new BroadcastSelect(this, socket);
 		broadcastSelect.setVisible(true);
 	}
 
@@ -1052,6 +1080,16 @@ public class RemoteConfig extends JFrame {
 		textArea.setText(text);
 	}
 	
+	public void setTitle(InetAddress inetAddress) {
+		String text = inetAddress.getHostAddress();
+		setTitle("Remote Configuration Manager " + text);
+	}
+	
+	public void setInterfaceAddress(InterfaceAddress interfaceAddress) {
+		RemoteConfig.interfaceAddress = interfaceAddress;
+		createSocket();
+	}
+	
 	public TreeMap<Integer, OrangePi> getTreeMap() {
 		return treeMap;
 	}
@@ -1077,14 +1115,13 @@ public class RemoteConfig extends JFrame {
 			try {
 				if (i == 0) {
 					broadcast("?list#*");
-					broadcast("?list#*");
 				} else {
 					broadcast("?list#");
 				}
 				while (true) {
 					byte[] buffer = new byte[BUFFERSIZE];
 					DatagramPacket dpack = new DatagramPacket(buffer, buffer.length);
-					socketReceive.receive(dpack);
+					socket.receive(dpack);
 
 					textArea.append(dpack.getAddress().toString() + "\n");
 					update(g);
@@ -1092,7 +1129,7 @@ public class RemoteConfig extends JFrame {
 					String str = new String(dpack.getData());
 					final String data[] = str.split("\n");
 
-					OrangePi opi = new OrangePi(data[0], socketReceive);
+					OrangePi opi = new OrangePi(data[0], socket);
 
 					if (opi.getIsValid()) {
 						treeMap.put(ByteBuffer.wrap(dpack.getAddress().getAddress()).getInt(), opi);
@@ -1234,7 +1271,8 @@ public class RemoteConfig extends JFrame {
 		try {
 			final DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), PORT);
 			try {
-				socketReceive.send(packet);
+				packet.setAddress(interfaceAddress.getBroadcast());
+				socket.send(packet);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1243,16 +1281,17 @@ public class RemoteConfig extends JFrame {
 		}
 	}
 
-	private void createReceiveSocket() {
-		if (socketReceive != null) {
-			socketReceive.close();
+	private void createSocket() {
+		if (socket != null) {
+			socket.close();
 		}
 		try {
-			socketReceive = new DatagramSocket(null);
-			SocketAddress sockaddr = new InetSocketAddress(PORT);
-			socketReceive.setBroadcast(true);
-			socketReceive.setSoTimeout(1000);
-			socketReceive.bind(sockaddr);
+			socket = new DatagramSocket(null);
+			SocketAddress sockaddr = new InetSocketAddress(interfaceAddress.getAddress(), PORT);
+			System.out.println(sockaddr);
+			socket.setBroadcast(true);
+			socket.setSoTimeout(1000);
+			socket.bind(sockaddr);
 		} catch (BindException e) {
 			JOptionPane.showMessageDialog(null, "There is already an application running using the UDP port: " + PORT);
 			doExit();
