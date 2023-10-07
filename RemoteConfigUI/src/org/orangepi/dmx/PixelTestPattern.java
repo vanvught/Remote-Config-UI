@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ public class PixelTestPattern extends JDialog {
 	}
 	
 	private void InitComponents() {
-		setBounds(100, 100, 535, 335);
+		setBounds(100, 100, 535, 300);
 
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -109,7 +109,6 @@ public class PixelTestPattern extends JDialog {
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addContainerGap()
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 								.addComponent(rdbtnNone_0)
 								.addComponent(rdbtnRainbow_1)
@@ -117,42 +116,32 @@ public class PixelTestPattern extends JDialog {
 								.addComponent(rdbtnColourWipe_3)
 								.addComponent(rdbtnScanner_4)
 								.addComponent(rdbtnFade_5)
-								.addComponent(btnApply)))
-						.addComponent(btnRefresh)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(chckbxReboot)))
+								.addComponent(btnApply)
+								.addComponent(btnRefresh)
+								.addComponent(chckbxReboot))))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-					.addContainerGap())
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
 		);
+		
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addContainerGap()
 							.addComponent(btnRefresh)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(rdbtnNone_0)
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(rdbtnRainbow_1)
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(rdbtnTheaterChase_2)
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(rdbtnColourWipe_3)
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(rdbtnScanner_4)
-							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(rdbtnFade_5)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnApply)
-							.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(chckbxReboot))
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGap(6)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)))
-					.addContainerGap())
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE))))
 		);
 		
 		textArea = new JTextArea();

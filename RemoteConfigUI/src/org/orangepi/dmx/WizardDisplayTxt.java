@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,15 +41,14 @@ import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 
 public class WizardDisplayTxt extends JDialog {
-	//
-	private static final String TXT_FILE = "display.txt";
-	//
 	private static final long serialVersionUID = 1L;
+	private static final String TXT_FILE = "display.txt";
 	private final JPanel contentPanel = new JPanel();
-	//
+
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
-	//
+	String txt = null;
+
 	final static String propertieKeys[] = { "#", "title", "board_name", "ip_address", "version", "active_ports",
 			"short_name", "hostname", "universe_port_a", "universe_port_b", "universe_port_c", "universe_port_d",
 			"net_mask", "dmx_start_address", "destination_ip_port_a", "destination_ip_port_b", "destination_ip_port_c",
@@ -281,7 +280,7 @@ public class WizardDisplayTxt extends JDialog {
 	
 	private void load() {
 		if (opi != null) {
-			final String txt = opi.getTxt(TXT_FILE);
+			txt = opi.getTxt(TXT_FILE);
 			if (txt != null) {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
@@ -353,11 +352,11 @@ public class WizardDisplayTxt extends JDialog {
 				e.printStackTrace();
 			}
 			
-			if (remoteConfig != null) {
-				remoteConfig.setTextArea(opi.getTxt(TXT_FILE));
-			}
+			load();
 			
-			System.out.println(txtAppend.toString());
+			if (remoteConfig != null) {
+				remoteConfig.setTextArea(this.txt);
+			}
 		}
 	}
 }

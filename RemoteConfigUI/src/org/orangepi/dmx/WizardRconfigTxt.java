@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class WizardRconfigTxt extends JDialog {
-	private final JPanel contentPanel = new JPanel();
 	private static final long serialVersionUID = 1L;
-	//
+	private static final String TXT_FILE = "rconfig.txt";
+	
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
-	//
+	String txt = null;
+	
+	private final JPanel contentPanel = new JPanel();
+	
 	private JButton btnCancel;
 	private JButton btnSave;
 	private JTextField textFieldDisplayName;
@@ -166,7 +169,7 @@ public class WizardRconfigTxt extends JDialog {
 		
 		btnSetDefaults.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				remoteConfig.setTextArea(opi.doDefaults("rconfig.txt"));
+				remoteConfig.setTextArea(opi.doDefaults(TXT_FILE));
 				load();
 			}
 		});
@@ -174,7 +177,7 @@ public class WizardRconfigTxt extends JDialog {
 	
 	private void load() {
 		if (opi != null) {
-			final String txt = opi.getTxt("rconfig.txt");
+			txt = opi.getTxt(TXT_FILE);
 			if (txt != null) {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
@@ -233,9 +236,11 @@ public class WizardRconfigTxt extends JDialog {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			load();
 
 			if (remoteConfig != null) {
-				remoteConfig.setTextArea(opi.getTxt("rconfig.txt"));
+				remoteConfig.setTextArea(this.txt);
 			}
 
 			System.out.println(rconfigTxt.toString());

@@ -1,4 +1,4 @@
-/* Copyright (C) 2020-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020-2021 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.net.InterfaceAddress;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -52,7 +53,7 @@ public class FirmwareInstallation extends JDialog {
 	private JCheckBox chckbxReboot;
 	private JTextField textVersion;
 	
-	public FirmwareInstallation(OrangePi Node, RemoteConfig remoteConfig) {
+	public FirmwareInstallation(OrangePi Node, RemoteConfig remoteConfig, InterfaceAddress interfaceAddress) {
 		InitComponents();
 		CreateEvents();
 
@@ -74,7 +75,7 @@ public class FirmwareInstallation extends JDialog {
 		if (!getTFTP.contains("On")) {
 			// Error
 		} else {
-			TFTPClient frame = new TFTPClient("", Node.getAddress());
+			TFTPClient frame = new TFTPClient("", Node.getAddress(), interfaceAddress);
 			frame.setVisible(true);
 
 			Thread t = new Thread() {
@@ -98,7 +99,11 @@ public class FirmwareInstallation extends JDialog {
 							e1.printStackTrace();
 						}
 						
-						final String getTFTP = Node.doGetTFTP();
+						String getTFTP;
+						
+						do {
+							getTFTP = Node.doGetTFTP();
+						} while (getTFTP.contains("ERROR"));
 						
 						chckbxTFTPOff.setSelected(!getTFTP.contains("On"));
 						

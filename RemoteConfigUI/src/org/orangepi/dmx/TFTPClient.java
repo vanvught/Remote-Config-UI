@@ -1,4 +1,4 @@
-/* Copyright (C) 2019 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,6 @@
 package org.orangepi.dmx;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +31,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.prefs.Preferences;
@@ -48,7 +50,7 @@ import javax.swing.filechooser.FileFilter;
 public class TFTPClient extends JDialog {
 	 private InetAddress IPAddressTFTPServer; 
 	 private byte[] receiveBuffer;
-	 private DatagramSocket clientSocket;
+	 private DatagramSocket socket;
 	 private DatagramPacket UDPPacket;
 	 private int TFPTport;
 	 private String pathFile;
@@ -74,28 +76,11 @@ public class TFTPClient extends JDialog {
 	
 	private int result = 0;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TFTPClient dialog = new TFTPClient("/Volumes/development/workspace/opi_emac_artnet_dmx/orangepi_one.uImage", InetAddress.getByName("192.168.2.121") );
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
 	public int result() {
 		return result;
 	}
 	
-	public TFTPClient(String FileName, InetAddress IPAddressTFTPServer) {
+	public TFTPClient(String FileName, InetAddress IPAddressTFTPServer, InterfaceAddress interfaceAddress) {
 		InitComponents();
 		CreateEvents();
 		
@@ -105,8 +90,14 @@ public class TFTPClient extends JDialog {
 		textField.setText(FileName);
 		
 		try {
-			clientSocket = new DatagramSocket();
-			clientSocket.setSoTimeout(1000);
+			if (socket != null) {
+				socket.close();
+			}
+			socket = new DatagramSocket(null);
+			SocketAddress sockaddr = new InetSocketAddress(interfaceAddress.getAddress(), 0);
+			System.out.println(sockaddr);
+			socket.setSoTimeout(1000);
+			socket.bind(sockaddr);
 		} catch (SocketException e) {
 			displayError(e.getLocalizedMessage());
 			e.printStackTrace();
@@ -284,11 +275,11 @@ public class TFTPClient extends JDialog {
 		byte[] requestBuffer = outputPacket.toByteArray();
 
         UDPPacket = new DatagramPacket(requestBuffer, requestBuffer.length, IPAddressTFTPServer, TFTP_DEFAULT_PORT);
-		clientSocket.send(UDPPacket);
+		socket.send(UDPPacket);
     
         // receiving Ack
-        UDPPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, InetAddress.getLocalHost(), clientSocket.getLocalPort());         
-        clientSocket.receive(UDPPacket);   
+        UDPPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, InetAddress.getLocalHost(), socket.getLocalPort());         
+        socket.receive(UDPPacket);   
          
         TFPTport = UDPPacket.getPort(); 
  
@@ -334,11 +325,11 @@ public class TFTPClient extends JDialog {
 			byte[] dataPacket = getDataPacket(block, chunck); 
 			
         	UDPPacket = new DatagramPacket(dataPacket, dataPacket.length, IPAddressTFTPServer, TFPTport);
-            clientSocket.send(UDPPacket);  
+            socket.send(UDPPacket);  
             
             // receiving Ack
-            UDPPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, InetAddress.getLocalHost(), clientSocket.getLocalPort());         
-            clientSocket.receive(UDPPacket);
+            UDPPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, InetAddress.getLocalHost(), socket.getLocalPort());         
+            socket.receive(UDPPacket);
             
             final int opCodeReceived =  getInt(Arrays.copyOfRange(receiveBuffer, 0, 2));
                         

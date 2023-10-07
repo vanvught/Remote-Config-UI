@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2022 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,12 +42,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
 public class WizardNodeNodeTxt extends JDialog {
-	private static final String TXT_FILE = "node.txt";
-	//
 	private static final long serialVersionUID = 1L;
+	private static final String TXT_FILE = "node.txt";
+	
 	String nodeId = null;
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
+	String txt = null;
 
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnCancel;
@@ -323,7 +324,7 @@ public class WizardNodeNodeTxt extends JDialog {
 	
 	private void load() {
 		if (opi != null) {
-			final String txt = opi.getTxt(TXT_FILE);
+			txt = opi.getTxt(TXT_FILE);
 			if (txt != null) {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
@@ -462,8 +463,10 @@ public class WizardNodeNodeTxt extends JDialog {
 				e.printStackTrace();
 			}
 			
+			load();
+			
 			if (remoteConfig != null) {
-				remoteConfig.setTextArea(opi.getTxt(TXT_FILE));
+				remoteConfig.setTextArea(this.txt);
 			}
 		}
 	}

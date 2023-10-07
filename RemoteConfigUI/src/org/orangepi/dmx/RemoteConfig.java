@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,7 @@
 package org.orangepi.dmx;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,7 @@ import java.net.InterfaceAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
@@ -122,6 +124,7 @@ public class RemoteConfig extends JFrame {
 	private JMenuItem mntmSelectInterface;
 	
 	private static InterfaceAddress interfaceAddress;
+	private JMenuItem mntmOpenBrowser;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -129,6 +132,11 @@ public class RemoteConfig extends JFrame {
 				try {
 					NetworkInterfaces networkInterfaces = new NetworkInterfaces();
 					RemoteConfig.interfaceAddress = networkInterfaces.getInterfaceAddress();
+					
+					if (RemoteConfig.interfaceAddress == null) {
+						JOptionPane.showMessageDialog(null, "There are no active network interface.");
+						System.exit(ABORT);
+					}
 					
 					RemoteConfig frame = new RemoteConfig();
 					frame.setVisible(true);
@@ -310,7 +318,7 @@ public class RemoteConfig extends JFrame {
 				}
 
 				if (!bRebooted) {
-					JOptionPane.showMessageDialog(null, "No node selected for reboot action.");
+					JOptionPane.showMessageDialog(null, "No node selected for [Reboot] action.");
 				}
 			}
 		});
@@ -325,7 +333,7 @@ public class RemoteConfig extends JFrame {
 						doSetFactoryDefaults((OrangePi) node.getUserObject());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "No node selected for factory defaults action.");
+					JOptionPane.showMessageDialog(null, "No node selected for [Factory defaults] action.");
 				}
 			}
 		});
@@ -340,7 +348,7 @@ public class RemoteConfig extends JFrame {
 						doSetDisplay((OrangePi) node.getUserObject());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "No node selected for display action.");
+					JOptionPane.showMessageDialog(null, "No node selected for [Display On/Off] action.");
 				}
 			}
 		});
@@ -355,7 +363,7 @@ public class RemoteConfig extends JFrame {
 						doSetTFTP((OrangePi) node.getUserObject());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "No node selected for TFTP action.");
+					JOptionPane.showMessageDialog(null, "No node selected for [TFTP] action.");
 				}
 			}
 		});
@@ -370,7 +378,7 @@ public class RemoteConfig extends JFrame {
 						doUptime((OrangePi) node.getUserObject());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "No node selected for uptime action.");
+					JOptionPane.showMessageDialog(null, "No node selected for [Uptime] action.");
 				}
 			}
 		});
@@ -385,9 +393,30 @@ public class RemoteConfig extends JFrame {
 						doVersion((OrangePi) node.getUserObject());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "No node selected for version action.");
+					JOptionPane.showMessageDialog(null, "No node selected for [Version] action.");
 				}
 			}
+		});
+		
+		mntmOpenBrowser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TreePath path = tree.getSelectionPath();
+
+				if (path != null) {
+					if (path.getPathCount() == 2) {
+						try {
+							DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
+							OrangePi opi = (OrangePi) node.getUserObject();
+							String url = "http://" + opi.getAddress().toString().replaceFirst("/", "");
+							Desktop.getDesktop().browse(URI.create(url));
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "No node selected for [Open browser] action.");
+				}
+			}	
 		});
 
 		mntmSave.addActionListener(new ActionListener() {
@@ -412,7 +441,7 @@ public class RemoteConfig extends JFrame {
 				if (path != null) {
 					if (path.getPathCount() == 2) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
-						TFTPClient client = new TFTPClient("", ((OrangePi) node.getUserObject()).getAddress());
+						TFTPClient client = new TFTPClient("", ((OrangePi) node.getUserObject()).getAddress(), getInterfaceAddress());
 						client.setVisible(true);
 					}
 				} else {
@@ -667,6 +696,10 @@ public class RemoteConfig extends JFrame {
 		mntmFactoryDefaults = new JMenuItem("Factory defaults");
 		mntmFactoryDefaults.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 		mnAction.add(mntmFactoryDefaults);
+		
+		mntmOpenBrowser = new JMenuItem("Open browser");
+		mntmOpenBrowser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK));
+		mnAction.add(mntmOpenBrowser);
 
 		mntmReboot = new JMenuItem("Reboot");
 		mntmReboot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
@@ -905,6 +938,10 @@ public class RemoteConfig extends JFrame {
 			}
 		}
 	}
+	
+	private InterfaceAddress getInterfaceAddress() {
+		return RemoteConfig.interfaceAddress;
+	}
 
 	private void doPixelTestPattern() {
 		PixelTestPattern pixelTestPattern = new PixelTestPattern(this);
@@ -919,7 +956,7 @@ public class RemoteConfig extends JFrame {
 
 	private void doFirmwareInstallation(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
-			FirmwareInstallation firmware = new FirmwareInstallation(opi, this);
+			FirmwareInstallation firmware = new FirmwareInstallation(opi, this, RemoteConfig.interfaceAddress);
 			firmware.setVisible(true);
 		}
 	}
@@ -1111,13 +1148,9 @@ public class RemoteConfig extends JFrame {
 
 		treeMap = new TreeMap<Integer, OrangePi>();
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 1; i++) {
 			try {
-				if (i == 0) {
-					broadcast("?list#*");
-				} else {
-					broadcast("?list#");
-				}
+				broadcast("?list#");
 				while (true) {
 					byte[] buffer = new byte[BUFFERSIZE];
 					DatagramPacket dpack = new DatagramPacket(buffer, buffer.length);

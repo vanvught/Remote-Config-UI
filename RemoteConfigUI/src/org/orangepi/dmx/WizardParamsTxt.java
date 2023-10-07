@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,15 +39,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
 public class WizardParamsTxt extends JDialog {
-	//
+	private static final long serialVersionUID = 1L;	
 	private static final String TXT_FILE = "params.txt";
-	//
-	private static final long serialVersionUID = 1L;
-	private final JPanel contentPanel = new JPanel();
-	//
+
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
-	//
+	String txt = null;
+	
+	private final JPanel contentPanel = new JPanel();
+	
 	private JButton btnSetDefaults;
 	private JButton btnSave;
 	private JButton btnCancel;
@@ -217,7 +217,7 @@ public class WizardParamsTxt extends JDialog {
 	
 	private void load() {
 		if (opi != null) {
-			final String txt = opi.getTxt(TXT_FILE);
+			txt = opi.getTxt(TXT_FILE);
 			if (txt != null) {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
@@ -260,11 +260,11 @@ public class WizardParamsTxt extends JDialog {
 				e.printStackTrace();
 			}
 			
-			if (remoteConfig != null) {
-				remoteConfig.setTextArea(opi.getTxt(TXT_FILE));
-			}
+			load();
 			
-			System.out.println(txtAppend.toString());
+			if (remoteConfig != null) {
+				remoteConfig.setTextArea(this.txt);
+			}
 		}
 	}
 }

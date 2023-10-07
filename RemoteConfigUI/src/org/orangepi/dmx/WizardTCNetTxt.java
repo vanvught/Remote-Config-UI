@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,24 +41,24 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
 public class WizardTCNetTxt extends JDialog {
-	private static final String TXT_FILE = "tcnet.txt";
-	//
 	private static final long serialVersionUID = 1L;
-	//
+	private static final String TXT_FILE = "tcnet.txt";
+
 	OrangePi opi = null;
 	RemoteConfig remoteConfig = null;
-	//
+	String txt = null;
+
 	private final JPanel contentPanel = new JPanel();
-	//
+	
 	private JFormattedTextField formattedTextFieldNodeName;
 	private JComboBox<String> comboBoxLayer;
 	private JComboBox<String> comboBoxTimecodeType;
 	private JCheckBox chckbxUseTimecode;
-	//
+	
 	private JButton btnCancel;
 	private JButton btnSetDefaults;
 	private JButton btnSave;
-	//
+	
 	static final String LAYER[] = { "1", "2", "3", "4", "A", "B", "M", "C" };
 	static final String TIMECODE_STRING[] = { "Film 24fps ", "EBU 25fps  ", "DF 29.97fps", "SMPTE 30fps" };
 	static final int TIMECODE_INT[] = { 24, 25, 29, 30 };
@@ -204,7 +204,7 @@ public class WizardTCNetTxt extends JDialog {
 	
 	private void load() {
 		if (opi != null) {
-			final String txt = opi.getTxt(TXT_FILE);
+			txt = opi.getTxt(TXT_FILE);
 			if (txt != null) {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
@@ -260,8 +260,10 @@ public class WizardTCNetTxt extends JDialog {
 				e.printStackTrace();
 			}
 			
+			load();
+			
 			if (remoteConfig != null) {
-				remoteConfig.setTextArea(opi.getTxt(TXT_FILE));
+				remoteConfig.setTextArea(this.txt);
 			}
 		}
 	}

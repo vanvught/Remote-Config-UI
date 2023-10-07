@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@ package org.orangepi.dmx;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
@@ -109,7 +110,7 @@ public class NetworkInterfaces extends JDialog {
 	private void InitComponents() {
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setTitle("Network Interfaces");
-		setBounds(100, 100, 369, 231);
+		setBounds(100, 100, 380, 235);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -209,26 +210,31 @@ public class NetworkInterfaces extends JDialog {
 						.addComponent(txtFieldIf4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
+		
 		contentPanel.setLayout(gl_contentPanel);
 		{
 			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				okButton = new JButton("OK");
 				okButton.setActionCommand("OK");
-				getRootPane().setDefaultButton(okButton);
+				
 			}
+			
+			getRootPane().setDefaultButton(okButton);
+			
 			GroupLayout gl_buttonPane = new GroupLayout(buttonPane);
 			gl_buttonPane.setHorizontalGroup(
 				gl_buttonPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_buttonPane.createSequentialGroup()
-						.addGap(289)
+						.addContainerGap(289, Short.MAX_VALUE)
 						.addComponent(okButton))
 			);
+			
 			gl_buttonPane.setVerticalGroup(
 				gl_buttonPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_buttonPane.createSequentialGroup()
-						.addGap(5)
 						.addComponent(okButton))
 			);
 			buttonPane.setLayout(gl_buttonPane);
@@ -316,9 +322,11 @@ public class NetworkInterfaces extends JDialog {
 		
 		try {
 			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			System.out.println(interfaces.toString());
 			
 			while (interfaces.hasMoreElements()) {
 				NetworkInterface networkInterface = interfaces.nextElement();
+				System.out.println(networkInterface.getDisplayName());
 				
 				if (networkInterface.isLoopback() || !networkInterface.isUp()) {
 					continue;
@@ -326,12 +334,15 @@ public class NetworkInterfaces extends JDialog {
 
 				for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
 					InetAddress broadcastAddress = interfaceAddress.getBroadcast();
+					
 					if (broadcastAddress != null) {
 						treeMap.put(networkInterface.getDisplayName(), interfaceAddress);
+						
 						if (prefs.get(LAST_INTERFACE_NAME, "").equals("")) {
 							this.interfaceAddress = interfaceAddress;
 							continue;
 						}
+						
 						if (prefs.get(LAST_INTERFACE_NAME, "").equals(networkInterface.getDisplayName())) {
 							this.interfaceAddress = interfaceAddress;
 						}
@@ -340,6 +351,13 @@ public class NetworkInterfaces extends JDialog {
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
+		}
+		
+		if (this.interfaceAddress == null) {
+			if (!treeMap.isEmpty()) {
+				Entry<String, InterfaceAddress> entry = treeMap.firstEntry();
+				this.interfaceAddress = entry.getValue();	
+			}
 		}
 		
 		if (!treeMap.isEmpty()) {

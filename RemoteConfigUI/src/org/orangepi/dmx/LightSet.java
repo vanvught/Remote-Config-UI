@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2023 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,44 +19,32 @@
 
 package org.orangepi.dmx;
 
-public class Properties {
-	static String getString(String line) {
-		final int index = line.indexOf('=') + 1;
-		if ((index > 0) && (index < line.length())) {
-			return line.substring(index);
-		}
-		return "";
-	}
-	
-	static int getInt(String line) {
-		final int index = line.indexOf('=') + 1;
-		if ((index > 0) && (index < line.length())) {
-			final int value = Integer.parseInt(line.substring(index));
-			return value;
-		}
-		return 0;
-	}
-	
-	static Boolean getBool(String line) {
-		if (getInt(line) != 0) {
-			return true;
-		}
-		return false;
-	}
-	
-	static String removeComments(String s) {
-		final String[] lines = s.split("\n");
-		
-		StringBuffer out = new StringBuffer(lines[0] + "\n");
-		
-		for (int i = 1; i < lines.length; i++) {
-			final String line = lines[i];
-			if (line.startsWith("#")) {
-				continue;
-			}
-			out.append(lines[i] + "\n");
+import javax.swing.JComboBox;
+
+public class LightSet {
+	static String getDirection(JComboBox<String> comboBox) {
+		if (comboBox.getSelectedItem().toString().toLowerCase().equals("input")) {
+			return "input";
 		}
 		
-		return out.toString();
+		if (comboBox.getSelectedItem().toString().toLowerCase().equals("disable")) {
+			return "disable";
+		}
+		
+		return "output";
+	}
+	
+	static String getMergeMode(JComboBox<String> comboBox) {
+		if (comboBox.getSelectedItem().toString().toLowerCase().equals("ltp")) {
+			return "ltp";
+		}
+		return "htp";
+	}
+	
+	static String getOutputStyle(JComboBox<String> comboBox) {
+		if (comboBox.getSelectedItem().toString().toLowerCase().equals("constant")) {
+			return "const";
+		}
+		return "delta";
 	}
 }
