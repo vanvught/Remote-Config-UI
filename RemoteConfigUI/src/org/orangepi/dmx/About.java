@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2019-2024 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ public class About extends JDialog {
 		JTextPane htmlURL = new JTextPane();
 		htmlURL.setEditable(false);
 		htmlURL.setContentType("text/html");
-		htmlURL.setText("<html>Website <a href=\"http://www.orangepi-dmx.org\">http://www.orangepi-dmx.org</a></html>");
+		htmlURL.setText("<html>Websites: <a href=\"http://www.orangepi-dmx.org\">http://www.orangepi-dmx.org</a> <a href=\\\"http://www.gd32-dmx.org\\\">http://www.gd32-dmx.org</a></html>");
 		htmlURL.addHyperlinkListener(new HyperlinkListener() {
 			@Override
 			public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -119,7 +119,7 @@ public class About extends JDialog {
 		txtArjan = new JTextField();
 		txtArjan.setBorder(null);
 		txtArjan.setHorizontalAlignment(SwingConstants.CENTER);
-		txtArjan.setText("(C) 2019-2023 Arjan van Vught");
+		txtArjan.setText("(C) 2019-2024 Arjan van Vught");
 		txtArjan.setEditable(false);
 		txtArjan.setColumns(10);
 

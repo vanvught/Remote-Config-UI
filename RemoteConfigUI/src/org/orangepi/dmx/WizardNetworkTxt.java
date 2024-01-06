@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2021-2024 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -476,20 +476,27 @@ public class WizardNetworkTxt extends JDialog {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
 					final String line = lines[i];
+					
 					if (line.contains("secondary_ip")) {
 						textFieldSecondaryIP.setText(Properties.getString(line));
 						hasSecondaryIP = true;
 						continue;
 					}
+					
+					// DHCP 
+					
 					if (line.contains("use_dhcp")) {
 						chckbxEnableDHCP.setSelected(Properties.getBool(line));
 						continue;
 					}
+					
 					if (line.contains("dhcp_retry_time")) {
 						spinner.setValue(Properties.getInt(line));
 						continue;
 					}
-					//
+					
+					// Static IP
+					
 					if (line.contains("ip_address")) {
 						final String value = Properties.getString(line).replace('.', '\n');
 						final String parts[] = value.split("\n");
@@ -500,6 +507,7 @@ public class WizardNetworkTxt extends JDialog {
 							formattedStaticIP4.setValue(Integer.parseInt(parts[3]));
 						}
 					}
+					
 					if (line.contains("default_gateway")) {
 						final String value = Properties.getString(line).replace('.', '\n');
 						final String parts[] = value.split("\n");
@@ -510,6 +518,7 @@ public class WizardNetworkTxt extends JDialog {
 							formattedGatewayIP4.setValue(Integer.parseInt(parts[3]));
 						}
 					}
+					
 					if (line.contains("net_mask")) {
 						textFieldNetmask.setText(Properties.getString(line));
 						try {
@@ -519,11 +528,14 @@ public class WizardNetworkTxt extends JDialog {
 						}
 						continue;	
 					}
+					
 					if (line.contains("hostname")) {
 						textFieldHostname.setText(Properties.getString(line));
 						continue;
 					}
-					//
+					
+					// NTP Server
+					
 					if (line.contains("ntp_server")) {
 						chckbxEnableNtpServer.setEnabled(true);
 						formattedNtpServerIP1.setEnabled(true);
@@ -554,6 +566,7 @@ public class WizardNetworkTxt extends JDialog {
 							}
 						}
 					}
+					
 					if (line.contains("ntp_utc_offset")) {
 						if (line.startsWith("#")) {
 							TimeZone timeZone = TimeZone.getDefault();
@@ -575,6 +588,7 @@ public class WizardNetworkTxt extends JDialog {
 			if (!chckbxEnableNtpServer.isEnabled()) {
 				comboBoxUtcOffset.setSelectedIndex(15);
 			}
+			
 			update();
 		}
 	}
@@ -591,48 +605,51 @@ public class WizardNetworkTxt extends JDialog {
 		formattedGatewayIP2.setEditable(!chckbxEnableDHCP.isSelected());
 		formattedGatewayIP3.setEditable(!chckbxEnableDHCP.isSelected());
 		formattedGatewayIP4.setEditable(!chckbxEnableDHCP.isSelected());
-		textFieldHostname.setEditable(!chckbxEnableDHCP.isSelected());
 	}	
 	
 	private void save() {
 		if (opi != null) {
-			StringBuffer networkTxt = new StringBuffer("#network.txt\n");
+			StringBuffer txtFile = new StringBuffer("#" + TXT_FILE + "\n");
 			
-			if (chckbxEnableDHCP.isSelected()) {
+			final boolean enableDHCP  = chckbxEnableDHCP.isSelected();
+			txtFile.append(String.format("use_dhcp=%d\n", enableDHCP ? 1 : 0));
+						
+			if (enableDHCP) {
 				// DHCP
-				networkTxt.append("use_dhcp=1\n");
-				networkTxt.append(String.format("dhcp_retry_time=%d\n", spinner.getValue()));
+				txtFile.append(String.format("dhcp_retry_time=%d\n", spinner.getValue()));
 			} else {
 				// Static IP
-				networkTxt.append("use_dhcp=0\n");
-				networkTxt.append(String.format("ip_address=%d.%d.%d.%d\n", formattedStaticIP1.getValue(),formattedStaticIP2.getValue(),formattedStaticIP3.getValue(),formattedStaticIP4.getValue()));
-				networkTxt.append(String.format("net_mask=%s\n", textFieldNetmask.getText()));
-				networkTxt.append(String.format("default_gateway=%d.%d.%d.%d\n", formattedGatewayIP1.getValue(),formattedGatewayIP2.getValue(),formattedGatewayIP3.getValue(),formattedGatewayIP4.getValue()));
-				
-				final String hostname = textFieldHostname.getText();
-				
-				if (hostname.length() > 63) {
-					networkTxt.append(String.format("hostname=%s\n", hostname.substring(0, 63)));
-					textFieldHostname.setText(hostname.substring(0, 63));
-				} else {
-					networkTxt.append(String.format("hostname=%s\n", hostname));
+				txtFile.append(String.format("ip_address=%d.%d.%d.%d\n", formattedStaticIP1.getValue(),formattedStaticIP2.getValue(),formattedStaticIP3.getValue(),formattedStaticIP4.getValue()));
+				txtFile.append(String.format("net_mask=%s\n", textFieldNetmask.getText()));
+				txtFile.append(String.format("default_gateway=%d.%d.%d.%d\n", formattedGatewayIP1.getValue(),formattedGatewayIP2.getValue(),formattedGatewayIP3.getValue(),formattedGatewayIP4.getValue()));
+			}
+			
+			final String hostname = textFieldHostname.getText();
+			
+			if (hostname.length() > 63) {
+				txtFile.append(String.format("hostname=%s\n", hostname.substring(0, 63)));
+				textFieldHostname.setText(hostname.substring(0, 63));
+			} else {
+				txtFile.append(String.format("hostname=%s\n", hostname));
+			}
+			
+			if (chckbxEnableNtpServer.isSelected()) {
+				// NTP Server
+				final String ip = String.format("%d.%d.%d.%d", formattedNtpServerIP1.getValue(), formattedNtpServerIP2.getValue(), formattedNtpServerIP3.getValue(), formattedNtpServerIP4.getValue());
+				txtFile.append(String.format("ntp_server=%s\n", ip));
+				prefs.put(LAST_USED_NTP_SERVER, ip);
+
+				String utcOffset = comboBoxUtcOffset.getSelectedItem().toString().replace(',', '.');
+
+				if (utcOffset.startsWith("+")) {
+					utcOffset = utcOffset.substring(1);
 				}
+
+				txtFile.append(String.format("ntp_utc_offset=%s\n", utcOffset));
 			}
-
-			// NTP Server
-			final String ip = String.format("%d.%d.%d.%d", formattedNtpServerIP1.getValue(), formattedNtpServerIP2.getValue(), formattedNtpServerIP3.getValue(), formattedNtpServerIP4.getValue());
-			networkTxt.append(String.format("%sntp_server=%s\n", chckbxEnableNtpServer.isSelected() ? "" : "#", ip));
-			prefs.put(LAST_USED_NTP_SERVER, ip);
-
-			String utcOffset = comboBoxUtcOffset.getSelectedItem().toString().replace(',', '.');
-
-			if (utcOffset.startsWith("+")) {
-				utcOffset = utcOffset.substring(1);
-			}
-			networkTxt.append(String.format("%sntp_utc_offset=%s\n", chckbxEnableNtpServer.isSelected() ? "" : "#", utcOffset));
-
+			
 			try {
-				opi.doSave(networkTxt.toString());
+				opi.doSave(txtFile.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

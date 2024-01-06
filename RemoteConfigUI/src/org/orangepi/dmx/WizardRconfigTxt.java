@@ -104,12 +104,13 @@ public class WizardRconfigTxt extends JDialog {
 						.addComponent(chckbxEnableReboot)
 						.addComponent(chckbxEnableFactoryDefaults)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(9)
+							.addGap(8)
 							.addComponent(lblDisplayname)
-							.addGap(18)
+							.addGap(8)
 							.addComponent(textFieldDisplayName, GroupLayout.PREFERRED_SIZE, 253, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
+		
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
@@ -182,26 +183,32 @@ public class WizardRconfigTxt extends JDialog {
 				final String[] lines = txt.split("\n");
 				for (int i = 0; i < lines.length; i++) {
 					final String line = lines[i];
+					
 					if (line.contains("disable")) {
 						chckbxDisable.setSelected(Properties.getBool(line));
 						continue;
 					}
+					
 					if (line.contains("disable_write")) {
 						chckbxDisableWrite.setSelected(Properties.getBool(line));
 						continue;
 					}
+					
 					if (line.contains("enable_reboot")) {
 						chckbxEnableReboot.setSelected(Properties.getBool(line));
 						continue;
 					}
+					
 					if (line.contains("enable_uptime")) {
 						chckbxEnableUptime.setSelected(Properties.getBool(line));
 						continue;
 					}
+					
 					if (line.contains("enable_factory")) {
 						chckbxEnableFactoryDefaults.setSelected(Properties.getBool(line));
 						continue;
 					}
+					
 					if (line.contains("display_name")) {
 						textFieldDisplayName.setText(Properties.getString(line));
 					}
@@ -213,11 +220,12 @@ public class WizardRconfigTxt extends JDialog {
 	private void save() {
 		if (opi != null) {
 			StringBuffer rconfigTxt = new StringBuffer("#rconfig.txt\n");
-			rconfigTxt.append(String.format("disable=%c\n",chckbxDisable.isSelected() ? '1' : '0'));
-			rconfigTxt.append(String.format("disable_write=%c\n",chckbxDisableWrite.isSelected() ? '1' : '0'));
-			rconfigTxt.append(String.format("enable_reboot=%c\n",chckbxEnableReboot.isSelected() ? '1' : '0'));
-			rconfigTxt.append(String.format("enable_uptime=%c\n",chckbxEnableUptime.isSelected() ? '1' : '0'));		
-			rconfigTxt.append(String.format("enable_factory=%c\n",chckbxEnableFactoryDefaults.isSelected() ? '1' : '0'));
+			
+			rconfigTxt.append(String.format("disable=%d\n",        chckbxDisable.isSelected()));
+			rconfigTxt.append(String.format("disable_write=%d\n",  chckbxDisableWrite.isSelected()));
+			rconfigTxt.append(String.format("enable_reboot=%d\n",  chckbxEnableReboot.isSelected()));
+			rconfigTxt.append(String.format("enable_uptime=%d\n",  chckbxEnableUptime.isSelected()));		
+			rconfigTxt.append(String.format("enable_factory=%d\n", chckbxEnableFactoryDefaults.isSelected()));
 		
 			String displayName = textFieldDisplayName.getText().trim();
 

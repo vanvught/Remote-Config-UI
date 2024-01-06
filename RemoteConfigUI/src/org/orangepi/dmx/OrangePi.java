@@ -36,7 +36,7 @@ public class OrangePi {
 											//  0			  1				2			  3			 4			    5					6		    7		8	   9              10		  11				 12
 	private static final String[] NODE_NAMES = {"Art-Net",    "sACN E1.31", "OSC Server", "LTC",     "OSC Client",  "RDMNet LLRP Only", "Showfile", "MIDI", "DDP", "PixelPusher", "Node",     "Bootloader TFTP", "RDM Responder"};
 	private static final String[] NODE_TXT   = {"artnet.txt", "e131.txt",   "osc.txt",    "ltc.txt", "oscclnt.txt", "",                 "show.txt", "",     "",    "",            "node.txt", "",                "rdm_device.txt"};
-	private static final String[] OUTPUT_TXT = {"params.txt", "devices.txt", "mon.txt", "serial.txt", "rgbpanel.txt", ""};
+	private static final String[] OUTPUT_TXT = {"params.txt", "devices.txt", "mon.txt", "serial.txt", "rgbpanel.txt", "", "pca9685.txt"};
 	private static final String LDISPLAY_TXT = "ldisplay.txt";
 	private static final String TCNET_TXT = "tcnet.txt";
 	private static final String GPS_TXT = "gps.txt";
@@ -129,6 +129,8 @@ public class OrangePi {
 					txtOutput = OUTPUT_TXT[4];
 				} else if (outputName[0].equals("RGB Panel")) {
 					txtOutput = OUTPUT_TXT[5];	
+				} else if (outputName[0].equals("PWM")) {
+					txtOutput = OUTPUT_TXT[6];	
 				} else if (outputName[0].equals("Pixel")) {
 					//
 				} else {

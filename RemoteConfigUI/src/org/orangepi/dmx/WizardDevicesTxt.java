@@ -59,7 +59,7 @@ public class WizardDevicesTxt extends JDialog {
 	private JButton btnCancel;
 	private JButton btnSave;
 	private int ledsPerPixel = 3;
-	private int maxPorts = 8;
+	private int maxPorts = 1;
 	private JLabel lblCount;
 	private NumberFormatter formatterCount;
 	private JFormattedTextField formattedTextFieldPixelCount;
@@ -490,8 +490,8 @@ public class WizardDevicesTxt extends JDialog {
 		
 		spinnerActiveOutput.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				if ((maxPorts == 8) && ((int) spinnerActiveOutput.getValue() > 8)) {
-					spinnerActiveOutput.setValue((int)8);
+				if ((int) spinnerActiveOutput.getValue() > maxPorts) {
+					spinnerActiveOutput.setValue(maxPorts);
 				}
 				update();
 			}
@@ -564,6 +564,11 @@ public class WizardDevicesTxt extends JDialog {
 					
 					if (line.contains("active_out")) {
 						spinnerActiveOutput.setValue(Properties.getInt(line));
+						continue;
+					}
+					
+					if (line.contains("start_uni_port_8")) {
+						maxPorts = 8;
 						continue;
 					}
 					
@@ -726,46 +731,47 @@ public class WizardDevicesTxt extends JDialog {
 	
 	private void save() {		
 		if (opi != null) {
-			StringBuffer devicesTxtAppend = new StringBuffer();		
-			devicesTxtAppend.append(String.format("led_count=%s\n", formattedTextFieldPixelCount.getText()));
-			devicesTxtAppend.append(String.format("led_type=%s\n", comboBoxType.getSelectedItem().toString()));
+			StringBuffer txtFile = new StringBuffer("#" + TXT_FILE + "\n");
+			
+			txtFile.append(String.format("led_count=%s\n", formattedTextFieldPixelCount.getText()));
+			txtFile.append(String.format("led_type=%s\n", comboBoxType.getSelectedItem().toString()));
 			
 			final String mapping = comboBoxMap.getSelectedItem().toString();
 			if (mapping.toLowerCase().equals("<default>")) {
 				// Nothing
 			} else {
-				devicesTxtAppend.append(String.format("led_rgb_mapping=%s\n", mapping));	
+				txtFile.append(String.format("led_rgb_mapping=%s\n", mapping));	
 			}
 			
-			devicesTxtAppend.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
+			txtFile.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
 			
 			if (!doDisableStartUniverse) {
-				devicesTxtAppend.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_2=%s\n", lblUniversePort2.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_3=%s\n", lblUniversePort3.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_4=%s\n", lblUniversePort4.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_5=%s\n", lblUniversePort5.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_6=%s\n", lblUniversePort6.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_7=%s\n", lblUniversePort7.getText()));
-				devicesTxtAppend.append(String.format("start_uni_port_8=%s\n", lblUniversePort8.getText()));
-				//
+				txtFile.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
+				if ((int) spinnerActiveOutput.getValue() > 1) {
+					txtFile.append(String.format("start_uni_port_2=%s\n", lblUniversePort2.getText()));
+					txtFile.append(String.format("start_uni_port_3=%s\n", lblUniversePort3.getText()));
+					txtFile.append(String.format("start_uni_port_4=%s\n", lblUniversePort4.getText()));
+					txtFile.append(String.format("start_uni_port_5=%s\n", lblUniversePort5.getText()));
+					txtFile.append(String.format("start_uni_port_6=%s\n", lblUniversePort6.getText()));
+					txtFile.append(String.format("start_uni_port_7=%s\n", lblUniversePort7.getText()));
+					txtFile.append(String.format("start_uni_port_8=%s\n", lblUniversePort8.getText()));
+				}
 				if ((int) spinnerActiveOutput.getValue() > 8) {
-					devicesTxtAppend.append(String.format("start_uni_port_9=%s\n", lblUniversePort9.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_10=%s\n", lblUniversePort10.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_11=%s\n", lblUniversePort11.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_12=%s\n", lblUniversePort12.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_13=%s\n", lblUniversePort13.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_14=%s\n", lblUniversePort14.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_15=%s\n", lblUniversePort15.getText()));
-					devicesTxtAppend.append(String.format("start_uni_port_16=%s\n", lblUniversePort16.getText()));
+					txtFile.append(String.format("start_uni_port_9=%s\n", lblUniversePort9.getText()));
+					txtFile.append(String.format("start_uni_port_10=%s\n", lblUniversePort10.getText()));
+					txtFile.append(String.format("start_uni_port_11=%s\n", lblUniversePort11.getText()));
+					txtFile.append(String.format("start_uni_port_12=%s\n", lblUniversePort12.getText()));
+					txtFile.append(String.format("start_uni_port_13=%s\n", lblUniversePort13.getText()));
+					txtFile.append(String.format("start_uni_port_14=%s\n", lblUniversePort14.getText()));
+					txtFile.append(String.format("start_uni_port_15=%s\n", lblUniversePort15.getText()));
+					txtFile.append(String.format("start_uni_port_16=%s\n", lblUniversePort16.getText()));
 				}
 			}
 			
-			devicesTxtAppend.append(String.format("led_grouping=%s\n", (int) formattedTextFieldGroupSize.getValue() != 1 ? "1" : "0"));
-			devicesTxtAppend.append(String.format("led_group_count=%d\n", (int) formattedTextFieldGroupSize.getValue()));
+			txtFile.append(String.format("led_group_count=%d\n", (int) formattedTextFieldGroupSize.getValue()));
 			
 			if (chckbxGammaCorrection.isSelected()) {
-				devicesTxtAppend.append(String.format("gamma_correction=1\n"));
+				txtFile.append(String.format("gamma_correction=1\n"));
 			}
 			
 			final String gammaValue = comboBoxGammaValue.getSelectedItem().toString();
@@ -773,26 +779,19 @@ public class WizardDevicesTxt extends JDialog {
 			if (gammaValue.toLowerCase().equals("<default>")) {
 				// Nothing
 			} else {
-				devicesTxtAppend.append(String.format("gamma_value=%s\n", gammaValue));	
+				txtFile.append(String.format("gamma_value=%s\n", gammaValue));	
 			}
 			
-			devicesTxtAppend.append(String.format("test_pattern=%s\n", comboBoxTestPattern.getSelectedIndex()));
-			
-			String txt = opi.getTxt("devices.txt");
-			
-			txt = txt.replaceAll("start_uni_port_", "#");
-			txt = txt.replaceAll("led_rgb_mapping", "#");
-			txt = txt.replaceAll("test_pattern", "#");
-			txt = txt.replaceAll("gamma_", "#");
+			txtFile.append(String.format("test_pattern=%s\n", comboBoxTestPattern.getSelectedIndex()));
 			
 			try {
-				opi.doSave(txt + "\n" + devicesTxtAppend.toString());
+				opi.doSave(txtFile.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			load();
-			
+
 			if (remoteConfig != null) {
 				remoteConfig.setTextArea(this.txt);
 			}

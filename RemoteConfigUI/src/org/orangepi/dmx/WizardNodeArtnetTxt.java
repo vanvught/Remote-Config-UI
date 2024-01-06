@@ -512,46 +512,45 @@ public class WizardNodeArtnetTxt extends JDialog {
 		
 	private void save() {
 		if (opi != null) {
-			StringBuffer txt = new StringBuffer("#" + TXT_FILE);
-			txt.append("\n");
+			StringBuffer txtFile = new StringBuffer("#" + TXT_FILE + "\n");
 			//
 			final String shortName = textFieldShortName.getText();	
 			if (shortName.length() > SHORT_NAME_LENGTH) {
-				txt.append(String.format("short_name=%s\n", shortName.substring(0, SHORT_NAME_LENGTH - 1)));
+				txtFile.append(String.format("short_name=%s\n", shortName.substring(0, SHORT_NAME_LENGTH - 1)));
 				textFieldShortName.setText(shortName.substring(SHORT_NAME_LENGTH - 1));
 			} else {
-				txt.append(String.format("short_name=%s\n", shortName));
+				txtFile.append(String.format("short_name=%s\n", shortName));
 			}
 			
 			final String longName = textFieldLongName.getText();	
 			if (longName.length() > LONG_NAME_LENGTH) {
-				txt.append(String.format("long_name=%s\n", longName.substring(0, LONG_NAME_LENGTH - 1)));
+				txtFile.append(String.format("long_name=%s\n", longName.substring(0, LONG_NAME_LENGTH - 1)));
 				textFieldShortName.setText(longName.substring(LONG_NAME_LENGTH - 1));
 			} else {
-				txt.append(String.format("long_name=%s\n", longName));
+				txtFile.append(String.format("long_name=%s\n", longName));
 			}
 			// Output
-			txt.append(String.format("enable_rdm=%d\n", chckbxEnableRDM.isSelected() ? 1 : 0));
+			txtFile.append(String.format("enable_rdm=%d\n", chckbxEnableRDM.isSelected() ? 1 : 0));
 			
-			txt.append(String.format("protocol_port_a=%s\n", getProtocol(comboBoxProtocolPortA)));
-			txt.append(String.format("protocol_port_b=%s\n", getProtocol(comboBoxProtocolPortB)));
-			txt.append(String.format("protocol_port_c=%s\n", getProtocol(comboBoxProtocolPortC)));
-			txt.append(String.format("protocol_port_d=%s\n", getProtocol(comboBoxProtocolPortD)));
+			txtFile.append(String.format("protocol_port_a=%s\n", getProtocol(comboBoxProtocolPortA)));
+			txtFile.append(String.format("protocol_port_b=%s\n", getProtocol(comboBoxProtocolPortB)));
+			txtFile.append(String.format("protocol_port_c=%s\n", getProtocol(comboBoxProtocolPortC)));
+			txtFile.append(String.format("protocol_port_d=%s\n", getProtocol(comboBoxProtocolPortD)));
 
-			txt.append(String.format("rdm_enable_port_a=%s\n", chckbxRdmEnablePortA.isSelected() ? 1 : 0));
-			txt.append(String.format("rdm_enable_port_b=%s\n", chckbxRdmEnablePortB.isSelected() ? 1 : 0));
-			txt.append(String.format("rdm_enable_port_c=%s\n", chckbxRdmEnablePortC.isSelected() ? 1 : 0));
-			txt.append(String.format("rdm_enable_port_d=%s\n", chckbxRdmEnablePortD.isSelected() ? 1 : 0));	
+			txtFile.append(String.format("rdm_enable_port_a=%s\n", chckbxRdmEnablePortA.isSelected() ? 1 : 0));
+			txtFile.append(String.format("rdm_enable_port_b=%s\n", chckbxRdmEnablePortB.isSelected() ? 1 : 0));
+			txtFile.append(String.format("rdm_enable_port_c=%s\n", chckbxRdmEnablePortC.isSelected() ? 1 : 0));
+			txtFile.append(String.format("rdm_enable_port_d=%s\n", chckbxRdmEnablePortD.isSelected() ? 1 : 0));	
 			// Input
-			txt.append(String.format("destination_ip_port_a=%d.%d.%d.%d\n", formattedIP1PortA.getValue(),formattedIP2PortA.getValue(),formattedIP3PortA.getValue(),formattedIP4PortA.getValue()));
-			txt.append(String.format("destination_ip_port_b=%d.%d.%d.%d\n", formattedIP1PortB.getValue(),formattedIP2PortB.getValue(),formattedIP3PortB.getValue(),formattedIP4PortB.getValue()));
-			txt.append(String.format("destination_ip_port_c=%d.%d.%d.%d\n", formattedIP1PortC.getValue(),formattedIP2PortC.getValue(),formattedIP3PortC.getValue(),formattedIP4PortC.getValue()));
-			txt.append(String.format("destination_ip_port_d=%d.%d.%d.%d\n", formattedIP1PortD.getValue(),formattedIP2PortD.getValue(),formattedIP3PortD.getValue(),formattedIP4PortD.getValue()));		
+			txtFile.append(String.format("destination_ip_port_a=%d.%d.%d.%d\n", formattedIP1PortA.getValue(),formattedIP2PortA.getValue(),formattedIP3PortA.getValue(),formattedIP4PortA.getValue()));
+			txtFile.append(String.format("destination_ip_port_b=%d.%d.%d.%d\n", formattedIP1PortB.getValue(),formattedIP2PortB.getValue(),formattedIP3PortB.getValue(),formattedIP4PortB.getValue()));
+			txtFile.append(String.format("destination_ip_port_c=%d.%d.%d.%d\n", formattedIP1PortC.getValue(),formattedIP2PortC.getValue(),formattedIP3PortC.getValue(),formattedIP4PortC.getValue()));
+			txtFile.append(String.format("destination_ip_port_d=%d.%d.%d.%d\n", formattedIP1PortD.getValue(),formattedIP2PortD.getValue(),formattedIP3PortD.getValue(),formattedIP4PortD.getValue()));		
 			// Art-Net 4
-			txt.append(String.format("map_universe0=%d\n", chckbxMapUniverse0.isSelected() ? 1 : 0));
+			txtFile.append(String.format("map_universe0=%d\n", chckbxMapUniverse0.isSelected() ? 1 : 0));
 						
 			try {
-				opi.doSave(txt.toString());
+				opi.doSave(txtFile.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

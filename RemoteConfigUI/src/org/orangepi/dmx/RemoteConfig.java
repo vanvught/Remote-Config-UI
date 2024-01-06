@@ -291,6 +291,9 @@ public class RemoteConfig extends JFrame {
 								if (txt.startsWith("node")) {
 									doWizardNode(opi);
 								}
+								if (txt.startsWith("pca9685")) {
+									doWizardPca9685(opi);
+								}
 							}
 						}
 					}
@@ -1032,7 +1035,8 @@ public class RemoteConfig extends JFrame {
 			}
 		}
 	}
-		
+	
+	// DMX Wizard
 	private void doWizardDmx(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
 			WizardParamsTxt wizard = new WizardParamsTxt(lblNodeId.getText(), opi, this);
@@ -1052,6 +1056,15 @@ public class RemoteConfig extends JFrame {
 	private void doWizardTCNet(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
 			WizardTCNetTxt wizard = new WizardTCNetTxt(lblNodeId.getText(), opi, this);
+			wizard.setModal(true);
+			wizard.setVisible(true);
+		}
+	}
+	
+	// PCA9685 Wizard
+	private void doWizardPca9685(OrangePi opi) {
+		if (lblNodeId.getText().trim().length() != 0) {
+			WizardPca9685Txt wizard = new WizardPca9685Txt(lblNodeId.getText(), opi, this);
 			wizard.setModal(true);
 			wizard.setVisible(true);
 		}
@@ -1176,7 +1189,7 @@ public class RemoteConfig extends JFrame {
 			}
 		}
 		
-//		treeMap.put(1, new OrangePi("192.168.2.150,Node,DMX,4", socketReceive));
+//		treeMap.put(1, new OrangePi("192.168.2.150,Art-Net,PWM,4", socket));
 
 		if (!treeMap.isEmpty()) {
 			textArea.setText("");
