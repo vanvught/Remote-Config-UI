@@ -221,11 +221,11 @@ public class WizardRconfigTxt extends JDialog {
 		if (opi != null) {
 			StringBuffer rconfigTxt = new StringBuffer("#rconfig.txt\n");
 			
-			rconfigTxt.append(String.format("disable=%d\n",        chckbxDisable.isSelected()));
-			rconfigTxt.append(String.format("disable_write=%d\n",  chckbxDisableWrite.isSelected()));
-			rconfigTxt.append(String.format("enable_reboot=%d\n",  chckbxEnableReboot.isSelected()));
-			rconfigTxt.append(String.format("enable_uptime=%d\n",  chckbxEnableUptime.isSelected()));		
-			rconfigTxt.append(String.format("enable_factory=%d\n", chckbxEnableFactoryDefaults.isSelected()));
+			rconfigTxt.append(String.format("disable=%d\n",        chckbxDisable.isSelected() ? 1 : 0));
+			rconfigTxt.append(String.format("disable_write=%d\n",  chckbxDisableWrite.isSelected() ? 1 : 0));
+			rconfigTxt.append(String.format("enable_reboot=%d\n",  chckbxEnableReboot.isSelected() ? 1 : 0));
+			rconfigTxt.append(String.format("enable_uptime=%d\n",  chckbxEnableUptime.isSelected() ? 1 : 0));		
+			rconfigTxt.append(String.format("enable_factory=%d\n", chckbxEnableFactoryDefaults.isSelected() ? 1 : 0));
 		
 			String displayName = textFieldDisplayName.getText().trim();
 
