@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2019-2024 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ public class RemoteConfig extends JFrame {
 	//
 	TreeMap<Integer, OrangePi> treeMap = null;
 	//
-	private final int BUFFERSIZE = 1024;
+	private final int BUFFERSIZE = 1470;
 	private final int PORT = 0x2905;
 	private DatagramSocket socket = null;
 
@@ -261,6 +261,9 @@ public class RemoteConfig extends JFrame {
 						if (index > 1) {
 							final String txt = text.substring(1, index);
 							if (txt.endsWith(".txt")) {
+								if (txt.startsWith("env")) {
+									doWizardEnv(opi);
+								}
 								if (txt.startsWith("rconfig")) {
 									doWizardRemoteConfig(opi);
 								}
@@ -293,6 +296,9 @@ public class RemoteConfig extends JFrame {
 								}
 								if (txt.startsWith("pca9685")) {
 									doWizardPca9685(opi);
+								}
+								if (txt.startsWith("show")) {
+									doWizardShow(opi);
 								}
 							}
 						}
@@ -963,6 +969,14 @@ public class RemoteConfig extends JFrame {
 			firmware.setVisible(true);
 		}
 	}
+	
+	private void doWizardEnv(OrangePi opi) {
+		if (lblNodeId.getText().trim().length() != 0) {
+			WizardEnvTxt wizard = new WizardEnvTxt(lblNodeId.getText(), opi, this);
+			wizard.setModal(true);
+			wizard.setVisible(true);
+		}
+	}
 
 	private void doWizardRemoteConfig(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
@@ -1065,6 +1079,14 @@ public class RemoteConfig extends JFrame {
 	private void doWizardPca9685(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
 			WizardPca9685Txt wizard = new WizardPca9685Txt(lblNodeId.getText(), opi, this);
+			wizard.setModal(true);
+			wizard.setVisible(true);
+		}
+	}
+	
+	private void doWizardShow(OrangePi opi) {
+		if (lblNodeId.getText().trim().length() != 0) {
+			WizardShowTxt wizard = new WizardShowTxt(lblNodeId.getText(), opi, this);
 			wizard.setModal(true);
 			wizard.setVisible(true);
 		}
@@ -1199,6 +1221,8 @@ public class RemoteConfig extends JFrame {
 			for (Map.Entry<Integer, OrangePi> entry : entries) {
 
 				child = new DefaultMutableTreeNode(entry.getValue());
+			
+				child.add(new DefaultMutableTreeNode(((OrangePi) child.getUserObject()).getEnv()));
 				child.add(new DefaultMutableTreeNode(((OrangePi) child.getUserObject()).getRemoteConfig()));
 
 				String nodeDisplay = ((OrangePi) child.getUserObject()).getDisplay();
@@ -1290,6 +1314,12 @@ public class RemoteConfig extends JFrame {
 
 				if (nodeETC != null) {
 					child.add(new DefaultMutableTreeNode(nodeETC));
+				}
+				
+				String nodeShow = ((OrangePi) child.getUserObject()).getNodeShow();
+
+				if (nodeShow != null) {
+					child.add(new DefaultMutableTreeNode(nodeShow));
 				}
 
 				root.add(child);

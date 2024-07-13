@@ -21,6 +21,7 @@ package org.orangepi.dmx;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,14 +31,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.NumberFormat;
-import java.util.TimeZone;
 import java.util.prefs.Preferences;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -46,19 +45,14 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
-import javax.swing.SwingConstants;
-import java.awt.Component;
 
 public class WizardNetworkTxt extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private static final String TXT_FILE = "network.txt";
-	
-	static final float UtcValidOffets[] = { -12.0f, -11.0f, -10.0f, -9.5f, -9.0f, -8.0f, -7.0f, -6.0f, -5.0f, -4.0f,
-			-3.5f, -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 5.5f, 5.75f, 6.0f, 6.5f, 7.0f,
-			8.0f, 8.75f, 9.0f, 9.5f, 10.0f, 10.5f, 11.0f, 12.0f, 12.75f, 13.0f, 14.0f };
-	
+		
 	private Preferences prefs = Preferences.userRoot().node(getClass().getName());
 	static final String LAST_USED_NTP_SERVER = "org.orangepi.dmx";
 	
@@ -74,11 +68,9 @@ public class WizardNetworkTxt extends JDialog {
 	private JLabel lblDhcpRetry;
 	private JSpinner spinner;
 	private JLabel lblStaticIp;
-	private JLabel lblLocal;
+	private JLabel lblPrimary;
 	private JLabel lblNetmask;
 	private JLabel lblNtpServerIp;
-	private JLabel lblUtcOffset;
-	private JComboBox<String> comboBoxUtcOffset;
 	private JLabel lblHostname;
 	private JTextField textFieldHostname;
 	private JTextField textFieldNetmask;
@@ -111,32 +103,21 @@ public class WizardNetworkTxt extends JDialog {
 		initComponents();
 		createEvents();
 
-		for (int i = 0; i < UtcValidOffets.length; i++) {
-			comboBoxUtcOffset.addItem(formatUtcOffset(UtcValidOffets[i]));
-		}
-
 		load();
 	}
 
 	private void initComponents() {
-		setBounds(100, 100, 346, 412);
+		setBounds(100, 100, 392, 359);
 		chckbxEnableDHCP = new JCheckBox("Enable DHCP");
-		lblDhcpRetry = new JLabel("DHCP retry");	
+		lblDhcpRetry = new JLabel("DHCP retry [minutes]");	
 		spinner = new JSpinner(new SpinnerNumberModel(0, 0, 5, 1));
 		spinner.setToolTipText("0 is no retry");
 		
-		JLabel lblMinutes = new JLabel("Minutes");
-		
 		lblStaticIp = new JLabel("Static");
 		lblStaticIp.setForeground(new Color(0, 0, 128));
-		lblLocal = new JLabel("Primary IP");
+		lblPrimary = new JLabel("Primary IP");
 		lblNetmask = new JLabel("Netmask");
 		lblNtpServerIp = new JLabel("Server IP");
-		lblUtcOffset = new JLabel("UTC offset");
-		
-		comboBoxUtcOffset = new JComboBox<String>();
-		comboBoxUtcOffset.setSelectedItem(formatUtcOffset(0));
-		comboBoxUtcOffset.setEnabled(false);
 		
 		lblHostname = new JLabel("Hostname");
 		textFieldHostname = new JTextField();
@@ -200,7 +181,7 @@ public class WizardNetworkTxt extends JDialog {
 				
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		getContentPane().add(contentPanel, BorderLayout.WEST);
 		
 		lblGateway = new JLabel("Gateway");
 		
@@ -230,154 +211,114 @@ public class WizardNetworkTxt extends JDialog {
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(chckbxEnableDHCP)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblDhcpRetry)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(spinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(chckbxEnableNtpServer)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(lblNtpServerIp)
+							.addGap(26)
+							.addComponent(formattedNtpServerIP1, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(formattedNtpServerIP2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(formattedNtpServerIP3, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(formattedNtpServerIP4, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblDhcpRetry)
-								.addComponent(lblNetmask)
 								.addComponent(lblHostname)
-								.addComponent(lblLocal)
-								.addComponent(lblNtpServerIp)
-								.addComponent(lblGateway)
-								.addComponent(lblStaticIp))
+								.addComponent(lblSecondaryIP))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(textFieldSecondaryIP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(textFieldHostname, 243, 243, 243)))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblStaticIp)
+								.addComponent(lblPrimary)
+								.addComponent(lblNetmask)
+								.addComponent(lblGateway))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(textFieldHostname, 243, 243, 243)
-									.addContainerGap())
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-									.addGroup(groupLayout.createSequentialGroup()
-										.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-											.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(formattedStaticIP1, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedStaticIP2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedStaticIP3, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedStaticIP4, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
-											.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(formattedGatewayIP1, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedGatewayIP2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedGatewayIP3, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedGatewayIP4, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
-											.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(formattedNtpServerIP1, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedNtpServerIP2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedNtpServerIP3, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedNtpServerIP4, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)))
-										.addGap(477)
-										.addComponent(lblsep, GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(formattedCdir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addGap(47))
-									.addGroup(groupLayout.createSequentialGroup()
-										.addComponent(textFieldNetmask, 144, 144, 144)
-										.addContainerGap()))))
-						.addComponent(lblSecondaryIP)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(81)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(spinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(formattedGatewayIP1, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblMinutes))
-								.addComponent(textFieldSecondaryIP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addGap(604))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(chckbxEnableDHCP)
-							.addGap(702))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblUtcOffset)
-							.addGap(12)
-							.addComponent(comboBoxUtcOffset, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-							.addGap(631))))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addComponent(chckbxEnableNtpServer)
-					.addContainerGap(678, Short.MAX_VALUE))
+									.addComponent(formattedGatewayIP2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedGatewayIP3, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedGatewayIP4, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
+								.addComponent(textFieldNetmask, 144, 144, 144)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(formattedStaticIP1, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedStaticIP2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedStaticIP3, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedStaticIP4, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(lblsep, GroupLayout.PREFERRED_SIZE, 8, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(formattedCdir, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)))))
+					.addContainerGap(709, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblSecondaryIP)
-						.addComponent(textFieldSecondaryIP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(chckbxEnableDHCP)
+						.addComponent(lblHostname)
+						.addComponent(textFieldHostname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(textFieldSecondaryIP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblSecondaryIP))
+					.addGap(12)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(chckbxEnableDHCP)
 						.addComponent(lblDhcpRetry)
-						.addComponent(spinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMinutes))
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-									.addComponent(lblsep)
-									.addComponent(formattedCdir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblStaticIp)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblLocal))))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(24)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(formattedStaticIP1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedStaticIP2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedStaticIP3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedStaticIP4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblNetmask)
-								.addComponent(textFieldNetmask, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(6)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(formattedGatewayIP1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedGatewayIP2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedGatewayIP3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedGatewayIP4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(10)
-							.addComponent(lblGateway)))
+						.addComponent(spinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(10)
+					.addComponent(lblStaticIp)
+					.addGap(5)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblPrimary)
+						.addComponent(formattedStaticIP1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedStaticIP2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedStaticIP3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedStaticIP4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblsep)
+						.addComponent(formattedCdir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(32)
-							.addComponent(chckbxEnableNtpServer))
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblHostname)
-							.addComponent(textFieldHostname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(6)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(formattedNtpServerIP1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedNtpServerIP2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedNtpServerIP3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedNtpServerIP4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(10)
-							.addComponent(lblNtpServerIp)))
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(comboBoxUtcOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(10)
-							.addComponent(lblUtcOffset)))
-					.addContainerGap(8, Short.MAX_VALUE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNetmask)
+						.addComponent(textFieldNetmask, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblGateway)
+						.addComponent(formattedGatewayIP1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedGatewayIP2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedGatewayIP3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedGatewayIP4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(chckbxEnableNtpServer)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNtpServerIp)
+						.addComponent(formattedNtpServerIP1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedNtpServerIP2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedNtpServerIP3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(formattedNtpServerIP4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(71, Short.MAX_VALUE))
 		);
-		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP1, formattedNtpServerIP1, formattedGatewayIP1});
-		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP2, formattedNtpServerIP2, formattedGatewayIP2});
-		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP3, formattedNtpServerIP3, formattedGatewayIP3});
 		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP4, formattedNtpServerIP4, formattedGatewayIP4});
+		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP3, formattedNtpServerIP3, formattedGatewayIP3});
+		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP2, formattedNtpServerIP2, formattedGatewayIP2});
+		groupLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {formattedStaticIP1, formattedNtpServerIP1, formattedGatewayIP1});
 		
 		contentPanel.setLayout(groupLayout);
 		
@@ -435,14 +376,7 @@ public class WizardNetworkTxt extends JDialog {
 			}
 		});
 	}
-	
-	private String formatUtcOffset(float f) {
-		if (f > 0) {
-			return String.format("+%1.2f", f);
-		}
-		return String.format("%1.2f", f);
-	}
-	
+		
 	private int convertNetmaskToCIDR(InetAddress netmask) {
 		byte[] netmaskBytes = netmask.getAddress();
 		int cidr = 0;
@@ -542,7 +476,6 @@ public class WizardNetworkTxt extends JDialog {
 						formattedNtpServerIP2.setEnabled(true);
 						formattedNtpServerIP3.setEnabled(true);
 						formattedNtpServerIP4.setEnabled(true);
-						comboBoxUtcOffset.setEnabled(true);
 						
 						String value;
 						
@@ -566,27 +499,12 @@ public class WizardNetworkTxt extends JDialog {
 							}
 						}
 					}
-					
-					if (line.contains("ntp_utc_offset")) {
-						if (line.startsWith("#")) {
-							TimeZone timeZone = TimeZone.getDefault();
-							final float offsetUtc = (float) timeZone.getOffset(System.currentTimeMillis()) / 3600000;
-							comboBoxUtcOffset.setSelectedItem(formatUtcOffset(offsetUtc));
-						} else {
-							comboBoxUtcOffset.setSelectedItem(formatUtcOffset(Float.parseFloat(Properties.getString(line))));
-						}
-						continue;
-					}
 				}
 			}
 			
 			if (!hasSecondaryIP) {
 				textFieldSecondaryIP.setForeground(Color.MAGENTA);
 				textFieldSecondaryIP.setText("Update firmware");
-			}
-			
-			if (!chckbxEnableNtpServer.isEnabled()) {
-				comboBoxUtcOffset.setSelectedIndex(15);
 			}
 			
 			update();
@@ -638,14 +556,6 @@ public class WizardNetworkTxt extends JDialog {
 				final String ip = String.format("%d.%d.%d.%d", formattedNtpServerIP1.getValue(), formattedNtpServerIP2.getValue(), formattedNtpServerIP3.getValue(), formattedNtpServerIP4.getValue());
 				txtFile.append(String.format("ntp_server=%s\n", ip));
 				prefs.put(LAST_USED_NTP_SERVER, ip);
-
-				String utcOffset = comboBoxUtcOffset.getSelectedItem().toString().replace(',', '.');
-
-				if (utcOffset.startsWith("+")) {
-					utcOffset = utcOffset.substring(1);
-				}
-
-				txtFile.append(String.format("ntp_utc_offset=%s\n", utcOffset));
 			}
 			
 			try {

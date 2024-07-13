@@ -465,6 +465,8 @@ public class WizardPca9685Txt extends JDialog {
 	
 	private void load() {
 		if (opi != null) {
+			comboBoxMode.setSelectedIndex(0);
+			
 			txt = opi.getTxt(TXT_FILE);
 			System.out.println(">|" + txt + "|<");
 			if (txt != null) {
@@ -472,13 +474,10 @@ public class WizardPca9685Txt extends JDialog {
 				for (int i = 0; i < lines.length; i++) {
 					final String line = lines[i];
 					
-					if (line.contains("mode")) {
+					if ((!line.startsWith("#")) && (line.contains("mode"))) {
 						if (Properties.getString(line).equals("servo")) {
+							System.out.println("Servo");
 							comboBoxMode.setSelectedIndex(1);
-							setMode(true);
-						} else {
-							comboBoxMode.setSelectedIndex(0);
-							setMode(false);
 						}
 						continue;
 					}
@@ -535,6 +534,7 @@ public class WizardPca9685Txt extends JDialog {
 			}
 		}
 		
+		setMode(comboBoxMode.getSelectedIndex() == 1);
 		calulateFootprint();
 	}
 	

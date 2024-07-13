@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2021-2024 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -628,7 +628,12 @@ public class WizardDevicesTxt extends JDialog {
 			universeStart = groups;
 			universes = universeStart;
 		} else {
-			universes = 1 + (groups / (512 / ledsPerPixel));
+			final int max_leds = 512 / ledsPerPixel;
+			universes = ((groups + (max_leds - 1)) / max_leds);
+			System.out.println("max_leds=" + max_leds);
+			System.out.println("ledsPerPixel=" + ledsPerPixel);
+			System.out.println("groups=" + groups);
+			System.out.println("universes=" + universes);
 		}
 		
 		lblUniversesPerPort.setText("[" + String.valueOf(universes) + "]");

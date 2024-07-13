@@ -1,4 +1,4 @@
-/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2019-2024 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ public class OrangePi {
 	private static final int BUFFERSIZE = 1024;
 	private static final int PORT = 0x2905;
 	
+	private static final String ENV_TXT = "env.txt";
 	private static final String RCONFIG_TXT = "rconfig.txt";
 	private static final String DISPLAY_TXT = "display.txt";
 	private static final String NETWORK_TXT = "network.txt";
@@ -46,6 +47,7 @@ public class OrangePi {
 	private static final String SENSORS_TXT = "sensors.txt";
 	private static final String SUBDEV_TXT = "subdev.txt";
 	private static final String SPARKFUN_TXT = "sparkfun.txt";
+	private static final String SHOW_TXT = "show.txt";
 	
 	private static final String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
 	
@@ -57,7 +59,8 @@ public class OrangePi {
 	
 	private String nodeId = "";
 	private String nodeDisplayName = "";
-	
+
+	private String txtEnv = null;
 	private String txtRemoteConfig = null;
 	private String txtDisplay = null;
 	private String txtNetwork = null;
@@ -102,8 +105,10 @@ public class OrangePi {
 				
 				if (outputName[0].equals("DMX") || outputName[0].equals("RDM")) {
 					txtOutput = OUTPUT_TXT[0];
+					txtShow = SHOW_TXT;
 				} else if ((outputName[0].equals("Pixel")) && (!txtNode.contains("ddp"))){
 					txtOutput = OUTPUT_TXT[1];
+					txtShow = SHOW_TXT;
 				} else if (outputName[0].equals("Monitor")) {
 					txtOutput = OUTPUT_TXT[2];
 				} else if (outputName[0].equals("TimeCode")) {
@@ -140,6 +145,7 @@ public class OrangePi {
 			
 			if (isValid) {
 				if (!listValues[1].toLowerCase().contains("bootloader")) {
+					txtEnv = ENV_TXT;
 					txtRemoteConfig = RCONFIG_TXT;
 					txtNetwork = NETWORK_TXT;
 				}
@@ -173,7 +179,9 @@ public class OrangePi {
 	}
 	
 	public String getTxt(String txt) {
-		if (isRemoteConfigTxt(txt)) {
+		if (isEnvTxt(txt)) {
+			return doGet(txt);
+		} else if (isRemoteConfigTxt(txt)) {
 			return doGet(txt);
 		} else if (isDisplayTxt(txt)) {
 			return doGet(txt);
@@ -302,8 +310,10 @@ public class OrangePi {
 		String txt = data.substring(1, nIndex + 4);
 		
 		Boolean bDoSave = false;
-		
-		if (isRemoteConfigTxt(txt)) {
+
+		if (isEnvTxt(txt)) {
+			bDoSave = true;
+		} else if (isRemoteConfigTxt(txt)) {
 			bDoSave = true;
 		} else if (isDisplayTxt(txt)) {
 			bDoSave = true;
@@ -457,6 +467,13 @@ public class OrangePi {
 		}
 		return false;
 	}
+
+	private Boolean isEnvTxt(String config) {
+		if (config.equals(ENV_TXT)) {
+			return true;
+		}
+		return false;
+	}
 	
 	private Boolean isRemoteConfigTxt(String config) {
 		if (config.equals(RCONFIG_TXT)) {
@@ -583,6 +600,10 @@ public class OrangePi {
 	
 	public String getDisplayName() {
 		return nodeDisplayName;
+	}
+	
+	public String getEnv() {
+		return txtEnv;
 	}
 	
 	public String getRemoteConfig() {
