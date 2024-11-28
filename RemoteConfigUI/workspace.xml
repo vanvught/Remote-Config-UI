@@ -12,7 +12,7 @@
         <buildnumber file="build.num"/>
         <jar destfile="${dir.jarfile}/RemoteConfigUI.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="org.orangepi.dmx.RemoteConfig"/>
+                <attribute name="Main-Class" value="org.dmx.gd32.RemoteConfig"/>
                 <attribute name="Class-Path" value="."/>
                 <attribute name="Implementation-Version" value="${build.number}"/> 
             </manifest>
