@@ -3,6 +3,8 @@ package org.dmx.gd32;
 public class PixelConfiguration {
 	static final String PIXEL_TYPES[] = {"WS2801", "WS2811", "WS2812", "WS2812B", "WS2813", "WS2815", "SK6812", "SK6812W", "UCS1903", "UCS2903", "CS8812", "APA102", "SK9822", "P9813"};
 	private final int PIXEL_SPI[] = {0, 11, 12, 13};
+	private final int MAX_LED_COUNT_RGBW = (4 * 128);
+	private final int MAX_LED_COUNT_RGB = (4 * 170);
 	private String pixelType;
 	private int count;
 	private Boolean isSupported;
@@ -52,6 +54,10 @@ public class PixelConfiguration {
 		return refreshRate;
 	}
 	
+	public int getCount()  {
+		return count;
+	}
+	
 	private void validate() {
 		isSupported = false;
 		for (int i = 0; i < PIXEL_TYPES.length; i++) {
@@ -74,7 +80,11 @@ public class PixelConfiguration {
 		}
 
 		if (this.pixelType.equals(PIXEL_TYPES[7])) {
+			count = count > MAX_LED_COUNT_RGBW ? MAX_LED_COUNT_RGBW : count;
 			ledsPerPixel = 4;
+		} else {
+			count = count > MAX_LED_COUNT_RGB ? MAX_LED_COUNT_RGB : count;
+			ledsPerPixel = 3;
 		}
 
 		if (isRTZ) {

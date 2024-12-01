@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2023 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2021-2024 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ import javax.swing.JCheckBox;
 public class PixelTestPattern extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private RemoteConfig remoteConfig;
-	private static final String patterns[] = {"None (Data)", "Rainbow", "Theater chase", "Colour wipe", "Scanner", "Fade"};
+	private static final String patterns[] = {"None (Data)", "Rainbow", "Theater chase", "Colour wipe", "Fade"};
 	//
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnRefresh;
@@ -53,8 +53,7 @@ public class PixelTestPattern extends JDialog {
 	private JRadioButton rdbtnRainbow_1;
 	private JRadioButton rdbtnTheaterChase_2;
 	private JRadioButton rdbtnColourWipe_3;
-	private JRadioButton rdbtnScanner_4;
-	private JRadioButton rdbtnFade_5;
+	private JRadioButton rdbtnFade_4;
 	private JCheckBox chckbxReboot;
 
 	public PixelTestPattern(RemoteConfig remoteConfig) {
@@ -69,7 +68,7 @@ public class PixelTestPattern extends JDialog {
 	}
 	
 	private void InitComponents() {
-		setBounds(100, 100, 535, 300);
+		setBounds(100, 100, 535, 275);
 
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -94,11 +93,8 @@ public class PixelTestPattern extends JDialog {
 		rdbtnColourWipe_3 = new JRadioButton("Colour wipe");
 		buttonGroup.add(rdbtnColourWipe_3);
 		
-		rdbtnScanner_4 = new JRadioButton("Scanner");
-		buttonGroup.add(rdbtnScanner_4);
-		
-		rdbtnFade_5 = new JRadioButton("Fade");
-		buttonGroup.add(rdbtnFade_5);
+		rdbtnFade_4 = new JRadioButton("Fade");
+		buttonGroup.add(rdbtnFade_4);
 		
 		chckbxReboot = new JCheckBox("Reboot");
 		chckbxReboot.setSelected(true);
@@ -114,8 +110,7 @@ public class PixelTestPattern extends JDialog {
 								.addComponent(rdbtnRainbow_1)
 								.addComponent(rdbtnTheaterChase_2)
 								.addComponent(rdbtnColourWipe_3)
-								.addComponent(rdbtnScanner_4)
-								.addComponent(rdbtnFade_5)
+								.addComponent(rdbtnFade_4)
 								.addComponent(btnApply)
 								.addComponent(btnRefresh)
 								.addComponent(chckbxReboot))))
@@ -134,8 +129,7 @@ public class PixelTestPattern extends JDialog {
 							.addComponent(rdbtnRainbow_1)
 							.addComponent(rdbtnTheaterChase_2)
 							.addComponent(rdbtnColourWipe_3)
-							.addComponent(rdbtnScanner_4)
-							.addComponent(rdbtnFade_5)
+							.addComponent(rdbtnFade_4)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnApply)
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -231,10 +225,8 @@ public class PixelTestPattern extends JDialog {
 			test_pattern = test_pattern + "2";
 		} else if (rdbtnColourWipe_3.isSelected()) {
 			test_pattern = test_pattern + "3";
-		} else if (rdbtnScanner_4.isSelected()) {
+		} else if (rdbtnFade_4.isSelected()) {
 			test_pattern = test_pattern + "4";
-		} else if (rdbtnFade_5.isSelected()) {
-			test_pattern = test_pattern + "5";
 		}  
 		
 		textArea.setText("");

@@ -160,7 +160,7 @@ public class WizardDevicesTxt extends JDialog {
 	}
 	
 	private void InitComponents() {
-		setBounds(100, 100, 340, 660);
+		setBounds(100, 100, 370, 660);
 	
 		JLabel lblType = new JLabel("Type / Mapping");
 		
@@ -249,7 +249,7 @@ public class WizardDevicesTxt extends JDialog {
 		comboBoxMap.setModel(new DefaultComboBoxModel<String>(new String[] {"<default>", "RGB", "RBG", "GRB", "GBR", "BRG", "BGR"}));
 		
 		comboBoxTestPattern = new JComboBox<String> ();
-		comboBoxTestPattern.setModel(new DefaultComboBoxModel<String>(new String[] {"Art-Net DMX", "Rainbow cycle", "Theater chase", "Colour wipe", "Scanner", "Fade"}));
+		comboBoxTestPattern.setModel(new DefaultComboBoxModel<String>(new String[] {"Art-Net DMX", "Rainbow cycle", "Theater chase", "Colour wipe", "Fade"}));
 		
 		JLabel lblTestPattern = new JLabel("Test pattern");
 		
@@ -355,18 +355,17 @@ public class WizardDevicesTxt extends JDialog {
 										.addGroup(groupLayout.createSequentialGroup()
 											.addComponent(comboBoxType, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
 											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(comboBoxMap, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
-										.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-											.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-												.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(lblFrameRate, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
-												.addGap(0)
-												.addComponent(lblFrameRateValue, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE))
-											.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-												.addComponent(formattedTextFieldStartUniverse, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.UNRELATED)
-												.addComponent(lblProtocol)))))
+											.addComponent(comboBoxMap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+										.addGroup(groupLayout.createSequentialGroup()
+											.addComponent(spinnerActiveOutput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addComponent(lblFrameRate, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+											.addGap(0)
+											.addComponent(lblFrameRateValue, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE))
+										.addGroup(groupLayout.createSequentialGroup()
+											.addComponent(formattedTextFieldStartUniverse, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.UNRELATED)
+											.addComponent(lblProtocol))))
 								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
 									.addGroup(groupLayout.createSequentialGroup()
 										.addComponent(lblTestPattern)
@@ -375,7 +374,8 @@ public class WizardDevicesTxt extends JDialog {
 									.addGroup(groupLayout.createSequentialGroup()
 										.addComponent(chckbxGammaCorrection)
 										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(comboBoxGammaValue, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))))))
+										.addComponent(comboBoxGammaValue, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))))
+							.addPreferredGap(ComponentPlacement.RELATED)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -642,12 +642,17 @@ public class WizardDevicesTxt extends JDialog {
 	}
 	
 	private void update() {
-		final int count = (int) formattedTextFieldPixelCount.getValue();
 		final int groupingCount = (int) formattedTextFieldGroupSize.getValue();
 		
-		PixelConfiguration pixelConfiguration = new PixelConfiguration(comboBoxType.getSelectedItem().toString(), count);
+		PixelConfiguration pixelConfiguration = new PixelConfiguration(comboBoxType.getSelectedItem().toString(), (int)formattedTextFieldPixelCount.getValue());
+		final int count = pixelConfiguration.getCount() ;
+		formattedTextFieldPixelCount.setText(String.valueOf(count));
 		
 		ledsPerPixel = pixelConfiguration.getLedsPerPixel();
+		
+		if (ledsPerPixel != 3) {
+			comboBoxMap.setSelectedIndex(0);
+		}
 		
 		if ((groupingCount == 0) || (groupingCount > count)){
 			formattedTextFieldGroupSize.setValue(count);
