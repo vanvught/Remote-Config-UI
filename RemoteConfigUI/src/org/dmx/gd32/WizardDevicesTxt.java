@@ -66,8 +66,6 @@ public class WizardDevicesTxt extends JDialog {
 	private JLabel lblStartUniverse;
 	private boolean doDisableStartUniverse = false;
 	private boolean isPixelPusher = false;
-	private int universeStart;
-	private int universes;
 
 	private JLabel lblPort1;
 	private JLabel lblPort2;
@@ -661,7 +659,8 @@ public class WizardDevicesTxt extends JDialog {
 		}
 		
 		final int groups = count / (int) formattedTextFieldGroupSize.getValue();
-		universeStart = (int) formattedTextFieldStartUniverse.getValue();
+		int universeStart = (int) formattedTextFieldStartUniverse.getValue();
+		int universes;
 		
 		if (doDisableStartUniverse) {
 			universeStart = groups;
@@ -790,64 +789,28 @@ public class WizardDevicesTxt extends JDialog {
 				txtFile.append(String.format("led_rgb_mapping=%s\n", mapping));	
 			}
 			
-			final int outputs = (int) spinnerActiveOutput.getValue();
-			txtFile.append(String.format("active_out=%d\n", outputs));
+			txtFile.append(String.format("active_out=%d\n", (int) spinnerActiveOutput.getValue()));
 			
 			if (!doDisableStartUniverse) {
-				txtFile.append(String.format("start_uni_port_1=%s\n", universeStart));
-				int universeStartNext = universeStart;
-
-				if (outputs >= 2) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_2=%s\n", universeStartNext));
+				txtFile.append(String.format("start_uni_port_1=%s\n", lblUniversePort1.getText()));
+				if ((int) spinnerActiveOutput.getValue() > 1) {
+					txtFile.append(String.format("start_uni_port_2=%s\n", lblUniversePort2.getText()));
+					txtFile.append(String.format("start_uni_port_3=%s\n", lblUniversePort3.getText()));
+					txtFile.append(String.format("start_uni_port_4=%s\n", lblUniversePort4.getText()));
+					txtFile.append(String.format("start_uni_port_5=%s\n", lblUniversePort5.getText()));
+					txtFile.append(String.format("start_uni_port_6=%s\n", lblUniversePort6.getText()));
+					txtFile.append(String.format("start_uni_port_7=%s\n", lblUniversePort7.getText()));
+					txtFile.append(String.format("start_uni_port_8=%s\n", lblUniversePort8.getText()));
 				}
-				if (outputs >= 3) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_3=%s\n", universeStartNext));
-				}
-				if (outputs >= 4) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_4=%s\n", universeStartNext));
-				}
-				if (outputs >= 5) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_5=%s\n", universeStartNext));
-				}
-				if (outputs >= 6) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_6=%s\n", universeStartNext));
-				}
-				if (outputs >= 7) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_7=%s\n", universeStartNext));
-				}
-				if (outputs >= 8) {
-					universeStartNext += universes;
-					txtFile.append(String.format("start_uni_port_8=%s\n", universeStartNext));
-				}
-				if (outputs >= 9) {
-					txtFile.append(String.format("start_uni_port_9=%s\n", universeStartNext));
-				}
-				if (outputs >= 10) {
-					txtFile.append(String.format("start_uni_port_10=%s\n", universeStartNext));
-				}
-				if (outputs >= 11) {
-					txtFile.append(String.format("start_uni_port_11=%s\n", universeStartNext));
-				}
-				if (outputs >= 12) {
-					txtFile.append(String.format("start_uni_port_12=%s\n", universeStartNext));
-				}
-				if (outputs >= 13) {
-					txtFile.append(String.format("start_uni_port_13=%s\n", universeStartNext));
-				}
-				if (outputs >= 14) {
-					txtFile.append(String.format("start_uni_port_14=%s\n", universeStartNext));
-				}
-				if (outputs >= 15) {
-					txtFile.append(String.format("start_uni_port_15=%s\n", universeStartNext));
-				}
-				if (outputs == 16) {
-					txtFile.append(String.format("start_uni_port_16=%s\n", universeStartNext));
+				if ((int) spinnerActiveOutput.getValue() > 8) {
+					txtFile.append(String.format("start_uni_port_9=%s\n", lblUniversePort9.getText()));
+					txtFile.append(String.format("start_uni_port_10=%s\n", lblUniversePort10.getText()));
+					txtFile.append(String.format("start_uni_port_11=%s\n", lblUniversePort11.getText()));
+					txtFile.append(String.format("start_uni_port_12=%s\n", lblUniversePort12.getText()));
+					txtFile.append(String.format("start_uni_port_13=%s\n", lblUniversePort13.getText()));
+					txtFile.append(String.format("start_uni_port_14=%s\n", lblUniversePort14.getText()));
+					txtFile.append(String.format("start_uni_port_15=%s\n", lblUniversePort15.getText()));
+					txtFile.append(String.format("start_uni_port_16=%s\n", lblUniversePort16.getText()));
 				}
 			}
 			
